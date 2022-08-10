@@ -22,7 +22,6 @@ new PbxApi("PbxAdminApi").onconnected(function (conn_pbx) {
 
         if (obj.src in requests) {
             requests[obj.src](obj);
-            //requests.splice(requests.indexOf(requests[obj.src]), 1);
             delete requests[obj.src];
         }
     });
