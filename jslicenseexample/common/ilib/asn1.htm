@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>innovaphone SDK - Socket implementation</title>
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <script src="../../web1/doc/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <h1>asn1</h1>
+    <p>
+        This is the part of the ASN1 encoder/decoder library, which is independent of the type of
+        encoding. The classes defined in this file are allocated statically to create
+        the definition of the ASN1 data structures.
+    </p>
+    <p>
+        The asn1_per or asn1_ber are used together with these definitions to do the actual
+        Basic Encoding Rule (asn1_ber) or Packet Encoding Rules (asn1_per) encoding and
+        decoding.
+    </p>
+    <p>
+        The asn1_in and asn1_out are abstract classes are used by the actual encoder/decoder
+        to read/write the data. This way the encoder/decoder may be adapted to different data
+        representations. Functions for reading and writing, bits, bit fields, octets and octet
+        fields need to be provided.
+    </p>
+
+    <h2>File information</h2>
+    <table style="margin-left:-12px">
+        <tr><td><b>File</b></td><td>common/ilib/asn1.h<br/><br/></td></tr>
+        <tr><td><b>Public functions</b></td><td>
+                                                <a href="#read_object_identifier">read_object_identifier</a><br>
+                                                <a href="#write_object_identifier">write_object_identifier</a><br>
+                                                <br/>
+                                            </td></tr>
+        <tr><td><b>Classes</b></td><td>
+                                       <a href="#asn1_out">asn1_out</a><br/>
+                                       <a href="#asn1_in">asn1_in</a><br/>
+                                       <a href="#asn1_context">asn1_context</a><br/>
+                                       <a href="#asn1">asn1</a><br/>
+                                       <a href="#asn1_null">asn1_null</a><br/>
+                                       <a href="#asn1_boolean">asn1_boolean</a><br/>
+                                       <a href="#asn1_int">asn1_int</a><br/>
+                                       <a href="#asn1_ints">asn1_ints</a><br/>
+                                       <a href="#asn1_inte">asn1_inte</a><br/>
+                                       <a href="#asn1_int8">asn1_int8</a><br/>
+                                       <a href="#asn1_int16">asn1_int16</a><br/>
+                                       <a href="#asn1_bitstring">asn1_bitstring</a><br/>
+                                       <a href="#asn1_enumerated">asn1_enumerated</a><br/>
+                                       <a href="#asn1_octet_array">asn1_octet_array</a><br/>
+                                       <a href="#asn1_ia5_string">asn1_ia5_string</a><br/>
+                                       <a href="#asn1_octet_string">asn1_octet_string</a><br/>
+                                       <a href="#asn1_word_string">asn1_word_string</a><br/>
+                                       <a href="#asn1_object_identifier">asn1_object_identifier</a><br/>
+                                       <a href="#asn1_sequence">asn1_sequence</a><br/>
+                                       <a href="#asn1_choice">asn1_choice</a><br/>
+                                       <a href="#asn1_sequence_of">asn1_sequence_of</a><br/>
+                                       <a href="#asn1_set_of">asn1_set_of</a><br/>
+                                       <a href="#asn1_numeric_string">asn1_numeric_string</a><br/>
+                                       <a href="#asn1_any">asn1_any</a><br/>
+                                       <br/>
+                                   </td></tr>
+        <tr><td><b>Examples</b></td><td>
+                                          <a href="#ExampleSequence">Sequence Definition</a><br>
+                                          <br/>
+                                      </td></tr>
+    </table>
+
+    <h1>Functions</h1>
+    <pre><code class="C++">void read_object_identifier(byte * in, dword * out);
+void write_object_identifier(dword * in, byte * out);
+</code></pre>
+    <br/>
+    <div id="read_object_identifier" class="fnhead" style="margin-top:5px">read_object_identifier</div></a>
+    <dd>
+        Reads an object identifier from its normal ASN1 representation as byte array into an array
+        of dwords with each node as one dword in the array.
+    </dd>
+
+    <div id="write_object_identifier" class="fnhead" style="margin-top:5px">write_object_identifier</div></a>
+    <dd>
+        Writes an object identifier to its normal ASN1 representation as byte array from an array of
+        dword, with each node as one dword in the array.
+    </dd>
+
+    <h1>Classes</h1>
+    <h2 id="asn1_out">asn1_out</h2>
+    <pre><code class="C++">class asn1_out {
+public:
+    virtual void bit(bool v)=0;
+    virtual void bit_field(dword v, int len)=0;
+    virtual void octet(byte v)=0;
+    virtual void octet_field(byte * v, int len)=0;
+    virtual void align()=0;
+    virtual void * new_stream(void * stream)=0;
+    virtual void append(void * stream)=0;
+    virtual dword length()=0;
+    virtual void get_reference(void * & buffer, int & offset)=0;
+};</code></pre>
+    <p>
+        Abstract class to write encoded data. Used by the encoder.
+    </p>
+    <dl>
+        <dt>bit</dt>
+        <dd>Write a single bit</dd>
+        <dt>bit_field</dt>
+        <dd>write a bit field of length bits</dd>
+        <dt>octet</dt>
+        <dd>write a single octet</dd>
+        <dt>octet_field</dt>
+        <dd>write an octet field of length octets</dd>
+        <dt>align</dt>
+        <dd>align the output according to encoding rules, so that next output is aligned</dd>
+        <dt>new_stream</dt>
+        <dd>opens a new stream for output, which may be added to the output later. Multiple new 
+        streams may be used nested. The outer stream is passed as 'stream'.</dd>
+        <dt>append</dt>
+        <dd>append a stream to the output</dd>
+        <dt>length</dt>
+        <dd>return the total length of the output data</dd>
+        <dt>get_reference</dt>
+        <dd>get a reference to the current output position. The meaning of buffer and offset depends on
+        the actual output class</dd>
+    </dl>
+    <h2 id="asn1_in">asn1_in</h2>
+    <pre><code class="C++">class asn1_in {
+public:
+    virtual bool bit()=0;
+    virtual dword bit_field(int len)=0;
+    virtual byte octet()=0;
+    virtual void octet_field(byte * v, int len)=0;
+    virtual void align()=0;
+    virtual int left()=0;
+    virtual void abort()=0;
+    virtual int get_count()=0;
+    virtual void set_count(int count)=0;
+    virtual void skip(int count)=0;
+    virtual void save()=0;
+    virtual void restore()=0;
+    virtual void get_reference(void * & buffer, int & offset)=0;
+};</code></pre>
+    <p>
+        Abstract class to read encoded data. Used by the decoder.
+    </p>
+    <dl>
+        <dt>bit</dt>
+        <dd>read a single bit</dd>
+        <dt>bit_field</dt>
+        <dd>read a bit field of <i>length</i> bits</dd>
+        <dt>octet</dt>
+        <dd>read a single octet</dd>
+        <dt>octet_field</dt>
+        <dd>read a octet field of<i>length</i>octets</dd>
+        <dt>align</dt>
+        <dd>align input according to the encoding rules</dd>
+        <dt>left</dt>
+        <dd>return data left in the input</dd>
+        <dt>abort</dt>
+        <dd>abort input sets count of read bytes to the end of the input</dd>
+        <dt>get_count</dt>
+        <dd>get count of already read bytes</dd>
+        <dt>set_count</dt>
+        <dd>set read position to<i>count</i></dd>
+        <dt>skip</dt>
+        <dd>skip<i>count</i>bytes on input</dd>
+        <dt>save</dt>
+        <dd>save the current input position</dd>
+        <dt>restore</dt>
+        <dd>restore the last saved input position</dd>
+        <dt>get_reference</dt>
+        <dd>get a reference to the current input position. The meaning of buffer and offset depends on
+        the actual output class</dd>
+    </dl>
+    <h2 id="asn1_context">asn1_context, asn1_tag</h2>
+    <pre><code class="C++">struct asn1_tag {
+    dword tag;
+    void * content;
+};
+
+class asn1_context {
+protected:
+    int tag_buffer_size;
+    int tag_index;
+    struct asn1_tag * tag_buffer;
+    int content_buffer_size;
+    int content_index;
+    byte * content_buffer;
+    unsigned fix_mask;
+    bool trace;
+
+public:
+    asn1_context(struct asn1_tag * tag_buffer, int tag_buffer_size, void * content_buffer, int content_buffer_size, bool trace);
+    struct asn1_tag * new_tag(word tag);
+    struct asn1_tag * new_tag(word tag, int size, dword align);
+    struct asn1_tag * find_tag(word tag);
+    void set_seq(int num);
+    dword get_mask();
+    dword set_mask(dword mask);
+    bool trace_on() { return trace; };
+    void set_fix(unsigned fix_mask) { this->fix_mask = fix_mask; };
+    int get_content_index() { return content_index; };
+
+    virtual void read(class asn1 & asn1, class asn1_in & in)=0;
+    virtual void write(class asn1 & asn1, class asn1_out & out)=0;
+
+    int level;
+
+    dword seq_of;
+    dword seq_mask;
+};
+</code></pre>
+    <p>
+        class to holding the actual decoded data or holding the data to be encoded. See documentation of
+        specific encoder for usage.
+    </p>
+    <h2 id="asn1">asn1</h2>
+    <pre><code class="C++">class asn1 {
+
+public:
+    word tag;
+    word type;
+    const char * name;
+
+    asn1(int & tag, const char * name);
+
+    bool is_present(class asn1_context & context);
+    virtual void fix(unsigned fix_mask) {};
+};</code></pre>
+    <p>
+        For each supported datatype a class is available for the definition, which
+        uses the class asn1 as base class. These classes have type specific put_content
+        and get_content functions. To put data into the coder context or get data from
+        the coder context.
+    </p>
+    <p>
+        All the classes, which use asn1 as base class have arguments tag and base as first
+        arguments of their constructor. Tag is used to increment a tag variable, so that
+        each data gets a unique tag. The name is used just for creating debug information, when
+        encoding or decoding.
+    </p>
+    <p>
+        A third argumenet properties, if present, is used for the flag ASN1_EXTENSION, which
+        indicates that the datatype may be extended.
+    </p>
+    
+    <h3 id="asn1_null">asn1_null</h3>
+    <pre><code class="C++">class asn1_null : public asn1 {
+
+public:
+    asn1_null(int & tag, const char * name);
+
+    void put_content(class asn1_context & context);
+};
+</code></pre>
+    <p>
+        ASN1 NULL datatype. The put_content sets the element as present.
+    </p>
+    
+    <h3 id="asn1_boolean">asn1_boolean</h3>
+    <pre><code class="C++">class asn1_boolean : public asn1 {
+
+public:
+    asn1_boolean(int & tag, const char * name);
+
+    bool get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, bool content);
+};</code></pre>
+    <p>
+        ASN1 BOOLEAN datatype
+    </p>
+    
+    <h3 id="asn1_int">asn1_int</h3>
+    <pre><code class="C++">class asn1_int : public asn1 {
+
+public:
+    byte count_bits;
+
+    asn1_int(int & tag, const char * name, byte count_bits);
+
+    dword get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, dword content);
+};</code></pre>
+    <p>
+        ASN1 INTEGER datatype, assumes positve values
+    </p>
+    <dl>
+        <dt>count_bits</dt>
+        <dd>Number of bits needed for the integer value. 0 means no restriction</dd>
+    </dl>
+    
+    <h3 id="asn1_ints">asn1_ints</h3>
+    <pre><code class="C++">class asn1_ints : public asn1 {
+
+public:
+    asn1_ints(int & tag, const char * name);
+
+    int get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, int content);
+};</code></pre>
+    <p>
+        ASN1 INTEGER datatype which allows negative values. No restrictions can be
+        defined with this type.
+    </p>
+    
+    <h3 id="asn1_inte">asn1_inte</h3>
+    <pre><code class="C++">class asn1_inte : public asn1 {
+
+public:
+    byte count_bits;
+    dword max;
+
+    asn1_inte(int & tag, const char * name, byte count_bits, dword max);
+
+    dword get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, dword content);
+};</code></pre>
+    <p>
+        ASN1 INTEGER datatype, which may be extended. count_bits is the not extended size.
+        max the maximum value.
+    </p>
+
+    <h3 id="asn1_int8">asn1_int8</h3>
+    <pre><code class="C++">class asn1_int8 : public asn1 {
+
+public:
+    asn1_int8(int & tag, const char * name);
+
+    dword get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, dword content);
+};</code></pre>
+    <p>
+        ASN1 INTEGER datatype. Optimization for the common case of an restriction to 8 bits.
+    </p>
+
+    <h3 id="asn1_int16">asn1_int16</h3>
+    <pre><code class="C++">class asn1_int16 : public asn1 {
+
+public:
+    asn1_int16(int & tag, const char * name);
+
+    dword get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, dword content);
+};</code></pre>
+    <p>
+        ASN1 INTEGER datatype. Optimization for the common case of an restriction to 16 bits.
+    </p>
+
+    <h3 id="asn1_bitstring">asn1_bitstring</h3>
+    <pre><code class="C++">class asn1_bitstring : public asn1 {
+
+public:
+    word min_length;
+    word max_length;
+    byte len_bits;
+
+    asn1_bitstring(int & tag, const char * name, int min_length, int max_length, int len_bits);
+
+    byte * get_content(class asn1_context & context, int * length);
+    void put_content(class asn1_context & context, byte * s, int length);
+    void put_content(class asn1_context & context, class packet * data);
+    word get_offset(class asn1_context & context, class packet * data);
+};</code></pre>
+    <p>
+        ASN1 BITSTRING datatype.
+    </p>
+    <dl>
+        <dt>min_length</dt><dd>The minimum number of bits</dd>
+        <dt>max_length</dt><dd>The maximum length of bits</dd>
+        <dt>len_bits</dt><dd>Bits needed to represent the length, which is the number of bits
+        needed to represent max_length - min_length</dd>
+    </dl>
+
+    <h3 id="asn1_enumerated">asn1_enumerated</h3>
+    <pre><code class="C++">class asn1_enumerated : public asn1 {
+
+public:
+    byte properties;
+    dword count;
+    byte count_bits;
+
+    asn1_enumerated(int & tag, const char * name, byte properties, byte count, byte count_bits);
+
+    dword get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, dword content);
+};</code></pre>
+    <p>
+        ASN1 ENUMERATED datatype
+    </p>
+    <dl>
+        <dt>count</dt><dd>Number of enumerated values</dd>
+        <dt>count_bits</dt><dd>Number of bits needed to represent count</dd>
+    </dl>
+
+    <h3 id="asn1_octet_array">asn1_octet_array</h3>
+    <pre><code class="C++">class asn1_octet_array : public asn1 {
+
+public:
+    word length;
+
+    asn1_octet_array(int & tag, const char * name, word length);
+
+    byte * get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, byte * content);
+};</code></pre>
+    <p>
+        ASN1 OCTET ARRAY
+    </p>
+    <dl>
+        <dt>length</dt><dd>length of the array</dd>
+    </dl>
+
+    <h3 id="asn1_ia5_string">asn1_ia5_string</h3>
+    <pre><code class="C++">class asn1_ia5_string : public asn1 {
+
+public:
+    word min_length;
+    word max_length;
+    byte len_bits;
+    byte char_bits;
+    const char * from;
+
+    asn1_ia5_string(int & tag, const char * name, int min_length, int max_length, byte len_bits, byte char_bits, const char * from);
+
+    byte * get_content(class asn1_context & context, int * length);
+    void put_content(class asn1_context & context, byte * s, int length);
+};</code></pre>
+    <p>
+        ASN1 IA5 STRING
+    </p>
+    <dl>
+        <dt>min_length</dt><dd>The minimum length of the string</dd>
+        <dt>max_length</dt><dd>The maximum length of the string</dd>
+        <dt>len_bits</dt><dd>The number of bits needed to represent max_length - min_length</dd>
+        <dt>char_bits</dt><dd>The bits for a single character</dd>
+        <dt>from</dt><dd>Array of characters represented by char_bits</dd>
+    </dl>
+
+    <h3 id="asn1_octet_string">asn1_octet_string</h3>
+    <pre><code class="C++">class asn1_octet_string : public asn1 {
+	
+public:
+	int std_tag;
+	word min_length;
+    word max_length;
+    byte len_bits;
+
+    asn1_octet_string(int & tag, const char * name, int min_length, int max_length, int len_bits);
+
+    byte * get_content(class asn1_context & context, int * length);
+    void put_content(class asn1_context & context, byte * s, int length);
+    void put_content(class asn1_context & context, class packet * data);
+};</code></pre>
+    <p>
+        ASN1 OCTET STRING
+    </p>
+    <dl>
+        <dt>min_length</dt><dd>The minimum length of the string</dd>
+        <dt>max_length</dt><dd>The maximum length of the string</dd>
+        <dt>len_bits</dt><dd>The number of bits needed to represent max_length - min_length</dd>
+    </dl>
+
+    <h3 id="asn1_word_string">asn1_word_string</h3>
+    <pre><code class="C++">class asn1_word_string : public asn1 {
+
+public:
+    word min_length;
+    word max_length;
+    byte len_bits;
+
+    asn1_word_string(int & tag, const char * name, int min_length, int max_length, int len_bits);
+
+    word * get_content(class asn1_context & context, int * length);
+    void put_content(class asn1_context & context, word * s, int length);
+};</code></pre>
+    <p>
+        ASN1 WORD STRING
+    </p>
+    <dl>
+        <dt>min_length</dt><dd>The minimum length of the string</dd>
+        <dt>max_length</dt><dd>The maximum length of the string</dd>
+        <dt>len_bits</dt><dd>The number of bits needed to represent max_length - min_length</dd>
+    </dl>
+
+    <h3 id="asn1_object_identifier">asn1_object_identifier</h3>
+    <pre><code class="C++">class asn1_object_identifier : public asn1 {
+
+public:
+    asn1_object_identifier(int & tag, const char * name);
+
+    byte * get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, byte * content);
+};</code></pre>
+    <p>
+        ASN1 OBJECT IDENTIFIER
+    </p>
+
+    <h3 id="asn1_sequence">asn1_sequence</h3>
+    <pre><code class="C++">class asn1_sequence : public asn1 {
+
+public:
+    byte properties;
+    byte count;
+    class asn1 ** table;
+    byte * flags;
+    word * tag_table;
+    byte ext_count;
+
+    asn1_sequence(int & tag, const char * name, byte properties, byte count, class asn1 ** table, byte * flags, byte ext_count=0, word * tag_table=0);
+
+    bool get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, bool content);
+};</code></pre>
+    <p>
+        ASN1 SEQUENCE
+    </p>
+    <dl>
+        <dt>count</dt><dd>number of elements in sequence</dd>
+        <dt>table</dt><dd>array of asn1 elements in the sequence</dd>
+        <dt>flags</dt><dd>array of flags corresponding to the elements. Only ASN1_OPTIONAL is used</dd>
+        <dt>ext_count</dt><dd>Number of asn1 elements extending the sequence</dd>
+        <dt>tag_count</dt><dd>used for BER only</dd>
+    </dl>
+
+    <h3 id="asn1_choice">asn1_choice</h3>
+    <pre><code class="C++">class asn1_choice : public asn1 {
+
+public:
+    byte properties;
+    byte count;
+    byte count_bits;
+    class asn1 ** table;
+    word * tag_table;
+    byte ext_count;
+
+    asn1_choice(int & tag, const char * name, byte properties, byte count, byte count_bits, class asn1 ** table, byte ext_count=0, word * tag_table=0);
+
+    dword get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, dword content);
+};</code></pre>
+    <p>
+        ASN1 CHOICE
+    </p>
+    <dl>
+        <dt>count</dt><dd>number of elements in choice</dd>
+        <dt>count_bits</dt><dd>number of bits needed to represent count</dd>
+        <dt>table</dt><dd>array of asn1 elements in choice</dd>
+        <dt>ext_count</dt><dd>Number of asn1 elements extending the choice</dd>
+        <dt>tag_count</dt><dd>used for BER only</dd>
+    </dl>
+
+    <h3 id="asn1_sequence_of">asn1_sequence_of</h3>
+    <pre><code class="C++">class asn1_sequence_of : public asn1 {
+
+public:
+	byte count_bits;
+    byte min_length;
+    class asn1 * seq;
+
+    asn1_sequence_of(int & tag, const char * name, byte count_bits, byte min_length, class asn1 * seq);
+
+    dword set_mask(class asn1_context & context);
+    dword get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, dword content);
+};</code></pre>
+    <p>
+        ASN1 SEQUENCE OF
+    </p>
+    <dl>
+        <dt>count_bits</dt><dd>number of bits needed to represent the number of elements</dd>
+        <dt>min_length</dt><dd>minimum number of elements in sequence of</dd>
+        <dt>asn1</dt><dd>pointer to asn1 class for the type of elements in the sequence of</dd>
+    </dl>
+    <h3 id="asn1_set_of">asn1_set_of</h3>
+    <pre><code class="C++">class asn1_set_of : public asn1 {
+
+public:
+	byte count_bits;
+    byte min_length;
+    class asn1 * seq;
+
+    asn1_set_of(int & tag, const char * name, byte count_bits, byte min_length, class asn1 * seq);
+
+    dword set_mask(class asn1_context & context);
+    dword get_content(class asn1_context & context);
+    void put_content(class asn1_context & context, dword content);
+};</code></pre>
+    <p>
+        ASN1 SET OF
+    </p>
+
+    <h3 id="asn1_numeric_string">asn1_numeric_string</h3>
+    <pre><code class="C++">class asn1_numeric_string : public asn1 {
+
+public:
+    word min_length;
+    word max_length;
+    byte len_bits;
+
+    asn1_numeric_string(int & tag, const char * name, int min_length, int max_length, int len_bits);
+
+    byte * get_content(class asn1_context & context, int * length);
+    void put_content(class asn1_context & context, byte * s, int length);
+    void put_content(class asn1_context & context, class packet * data);
+};
+</code></pre>
+    <p>
+        ASN1 NUMERIC STRING
+    </p>
+
+    <h3 id="asn1_any">asn1_any</h3>
+    <pre><code class="C++">class asn1_any : public asn1 {
+public:
+    asn1_any(int & tag, const char * name);
+
+    bool get_content(class asn1_context & context);
+    void put_content(class asn1_context & context);
+
+    virtual class asn1 * get_actual(class asn1_context & context) {
+        return 0;
+    }
+};
+</code></pre>
+    <p>
+        ASN1 ANY datatype which may hold any asn1 datatype, which means it is encoded containing
+        a length field, because the total length cannot determined by the content
+    </p>
+</body>
+</html>

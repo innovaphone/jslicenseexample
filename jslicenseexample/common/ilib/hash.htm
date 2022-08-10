@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>innovaphone SDK - hash.h</title>
+    <!-- Take care to adjust the 3 paths if needed, e. g.: "../../web1/doc" if the file is in the common/interface folder -->
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <script src="../../web1/doc/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <h1>Hash Library</h1>
+    <p>
+        The hash library can be used to compute hash values and HMACs. The following algorithms are supported:
+        <ul>
+            <li>MD4</li>
+            <li>MD5</li>
+            <li>SHA1</li>
+            <li>SHA224</li>
+            <li>SHA256</li>
+            <li>SHA384</li>
+            <li>SHA512</li>
+        </ul>
+    </p>
+
+    <h2>File information</h2>
+    <table style="margin-left:-12px">
+        <tr><td><b>File</b></td><td>common/ilib/hash.h<br><br></td></tr>
+        <tr>
+            <td><b>Classes</b></td>
+            <td>
+                <a href="#hash">hash</a><br>
+                <a href="#hmac">hmac</a><br>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Data types</b></td>
+            <td>
+                <a href="#hash_t">hash_t</a><br>
+                <br>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Examples</b></td>
+            <td>
+                <a href="#Example_SHA256">Calculating a SHA256 hash</a><br>
+                <a href="#Example_HMAC_SHA1">Calculating HMAC-SHA1</a><br>
+                <br>
+            </td>
+        </tr>
+    </table>
+
+    <h1>Classes</h1>
+    <a name="hash"><h2>hash</h2></a>
+    <pre><code class="C++">class hash {
+    ulong64 context[27];
+    hash_t type;
+public:
+    hash();
+    void init(hash_t type);
+    void update(const void * in, size_t len);
+    void final(void * out);
+    void copy(class hash * from);
+    size_t size();
+};</code></pre>
+
+    <h3>Overview</h3>
+    <p>
+        The hash class defines a uniform interface for calculating hashes using different algorithms.
+    </p>
+    <p>
+        Hash functions process an arbitrary number of bytes, possibly devided into chunks, and produce a fixed number of output bytes. The output is called a "hash" or "digest".
+        The same input data always produces the same digest. So hashes can be used for integrity protection of messages.
+        Cryptographically strong hash functions like SHA256 make it very hard (aka impossible) to gain any information about the input from the produced digest.
+        So they are often used for digital signatures and login protocols.
+    </p>
+
+    <h3>Public functions</h3>
+    <div class="fnhead">init</div>
+    <dd>
+        Initializes the internal state of the object and sets the algorithm to be used.
+
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param"><a href="#hash_t">hash_t</a> <b>type</b></td>
+                <td>
+                    The hash algorithm to be used.
+                </td>
+            </tr>
+        </table>
+
+        <h4>Remarks</h4>
+        The init function has to be called before using any other functions of the object.
+    </dd>
+    <div class="fnhead">update</div>
+    <dd>
+        Processes a chunk of input data.
+
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">const void * <b>in</b></td>
+                <td>
+                    The input buffer.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">size_t <b>len</b></td>
+                <td>
+                    The number of bytes to be processed.
+                </td>
+            </tr>
+        </table>
+
+        <h4>Remarks</h4>
+        This function can be called mupltiple times.
+    </dd>
+
+    <div id="hash_final" class="fnhead">final</div>
+    <dd>
+        Calculates the hash and copies the value to the given out buffer.
+        
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">void * <b>out</b></td>
+                <td>
+                    The output buffer to write the hash value in binary form.
+                    The buffer size must match the hash size defined by the algorithm.
+                </td>
+            </tr>
+        </table>
+        
+        <h4>Remarks</h4>
+        The <a href="#hash_size">size</a> function can be used to determine the needed output buffer size.
+    </dd>
+
+    <div class="fnhead">copy</div>
+    <dd>
+        Copies the internal state from the given other hash.
+        
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param"><a href="#hash">class hash *</a> <b>from</b></td>
+                <td>
+                    A pointer to another hash object that shall be duplicated.
+                </td>
+            </tr>
+        </table>
+    </dd>
+
+    <div id="hash_size" class="fnhead">size</div>
+    <dd>
+        <h4>Return value</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">size_t</td>
+                <td>
+                    The size of the hash value for the current algorithm. This is the number of bytes that is written by function <a href="#hash_final">final</a> to the out buffer.
+                </td>
+            </tr>
+        </table>
+    </dd>
+
+    <h1>Data types</h1>
+    <h2>Defines / Statics</h2>
+    <table style="margin-left: 20px">
+        <tr><td id="HASH_SIZE_MD4"><b>HASH_SIZE_MD4</b></td><td>MD4 hashes use 16 bytes</td></tr>
+        <tr><td id="HASH_SIZE_MD5"><b>HASH_SIZE_MD5</b></td><td>MD5 hashes use 16 bytes</td></tr>
+        <tr><td id="HASH_SIZE_SHA1"><b>HASH_SIZE_SHA1</b></td><td>SHA1 hashes use 20 bytes</td></tr>
+        <tr><td id="HASH_SIZE_SHA224"><b>HASH_SIZE_SHA224</b></td><td>SHA224 hashes use 28 bytes</td></tr>
+        <tr><td id="HASH_SIZE_SHA256"><b>HASH_SIZE_SHA256</b></td><td>SHA256 hashes use 32 bytes</td></tr>
+        <tr><td id="HASH_SIZE_SHA384"><b>HASH_SIZE_SHA384</b></td><td>SHA384 hashes use 48 bytes</td></tr>
+        <tr><td id="HASH_SIZE_SHA512"><b>HASH_SIZE_SHA512</b></td><td>SHA512 hashes use 64 bytes</td></tr>
+        <tr><td id="HASH_SIZE_MAX"><b>HASH_SIZE_MAX</b></td><td>The maximum hash size produced by the library.</td></tr>
+    </table>
+
+    <h2 id="hash_t">hash_t</h2>
+    <pre><code style="laguage-cpp">enum hash_t {
+    HASH_UNDEFINED,
+    HASH_MD4,
+    HASH_MD5,
+    HASH_SHA1,
+    HASH_SHA224,
+    HASH_SHA256,
+    HASH_SHA384,
+    HASH_SHA512
+};</code></pre>
+
+    <h3>Overview</h3>
+    The hash_t enum defines all hash algorithms supported by the library.
+
+    <h3>Values</h3>
+    <table style="margin-left: 20px">
+        <tr><td><b>HASH_UNDEFINED</b></td><td>Used internally to identify uninitialized objects.</td></tr>
+        <tr><td><b>HASH_MD4</b></td><td>Considered as cryptographically weak.</td></tr>
+        <tr><td><b>HASH_MD5</b></td><td>Considered as cryptographically weak.</td></tr>
+        <tr><td><b>HASH_SHA1</b></td><td>Considered as cryptographically weak.</td></tr>
+        <tr><td><b>HASH_SHA224</b></td><td></td></tr>
+        <tr><td><b>HASH_SHA256</b></td><td></td></tr>
+        <tr><td><b>HASH_SHA384</b></td><td></td></tr>
+        <tr><td><b>HASH_SHA512</b></td><td></td></tr>
+    </table>
+
+    <h3>Remarks</h3>
+    The old algorithms MD4, MD5 and SHA1 are insecure. They should not be used for new projects.
+    Please use the algorithms of the SHA2 family (SHA224, SHA256, SHA384 or SHA512).
+
+    <h1> Code Example </h1>
+    <h2 id="Example_SHA256">Calculating a SHA256 hash</h2>
+    <pre class="sample"><code style="language-cpp">hash h;
+byte out[32];
+h.init(HASH_SHA256);
+h.update(data1, 16);
+h.update(data2, 5);
+h.final(out);
+</code></pre>
+
+    <a name="Example_HMAC_SHA1"><h2>Calculating HMAC-SHA1</h2></a>
+    <pre class="sample"><code style="language-cpp">hmac h;
+byte out[HASH_SIZE_SHA1];
+h.init(HASH_SHA1, key, key_len);
+h.update(data1, 16);
+h.update(data2, 5);
+h.final(out);
+</code></pre>
+</body>
+</html>

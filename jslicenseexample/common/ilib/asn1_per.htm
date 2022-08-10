@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>innovaphone SDK - Socket implementation</title>
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <script src="../../web1/doc/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <h1>asn1_per</h1>
+    <p>
+        The packed encoding rule encoder/decoder
+    </p>
+    <h2>File information</h2>
+    <table style="margin-left:-12px">
+        <tr><td><b>File</b></td><td>common/ilib/asn1_per.h<br/><br/></td></tr>
+        <tr><td><b>Classes</b></td><td>
+                                       <a href="#asn1_context_per">asn1_context_per</a><br/>
+                                       <br/>
+                                   </td></tr>
+        <tr><td><b>Examples</b></td><td>
+                                          <a href="#Encode">Encode</a><br>
+                                          <a href="#Decode">Decode</a><br>
+                                          <br/>
+                                      </td></tr>
+    </table>
+    <h1>Classes</h1>
+    <a name="asn1_context_per"><h2>asn1_context_per</h2></a>
+    <pre><code class="C++">class asn1_context_per : public asn1_context {
+     ...
+public:
+    asn1_context_per(struct asn1_tag * tag_buffer, int tag_buffer_size, void * content_buffer, int content_buffer_size, bool trace, unsigned fix_mask=0) : 
+        asn1_context(tag_buffer,tag_buffer_size,content_buffer,content_buffer_size,trace) { set_fix(fix_mask); };
+    void * operator new(size_t s, void * a) { return a; };
+
+    void read(class asn1 & asn1, class asn1_in & in);
+    void write(class asn1 & asn1, class asn1_out & out);
+};
+</code></pre>
+    <p>
+        Encoder/decoder class
+    </p>
+    <dl>
+        <dt>void read(class asn1 & asn1, class asn1_in & in)</dt>
+        <dd>
+            Read in the data to be decoded
+            <dl>
+                <dt>class asn1 & asn1</dt><dd>The definition to be used</dd>
+                <dt>class asn1_in & in</dt><dd>Input class</dd>
+            </dl>
+        </dd>
+        <dt>void write(class asn1 & asn1, class asn1_out & out)</dt>
+        <dd>
+            Read in the data to be decoded
+            <dl>
+                <dt>class asn1 & asn1</dt><dd>The definition to be used</dd>
+                <dt>class asn1_out & out</dt><dd>Output class</dd>
+            </dl>
+        </dd>
+    </dl>
+</body>
+</html>

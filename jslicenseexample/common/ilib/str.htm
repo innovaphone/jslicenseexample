@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>str</title>
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+	<link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <h1>str</h1>
+    <p>
+        Class <b>str</b> is a collection of static functions for string processing.
+    </p>
+
+    <h2>UTF-8 strings</h2>
+    <p>
+        <dl>
+            <dt>int cmp(const char * s1, const char * s2)</dt>
+            <dd>NULL-pointer safe front-end to strcmp(), NULL lower than non-NULL (even if addressing an empty string)</dd>
+
+            <dt>int icmp(const char * s1, const char * s2)</dt>
+            <dd>case independent comparison of UTF-8 encoded strings</dd>
+
+            <dt>int n_icmp(const char * s1, const char * s2, dword num)</dt>
+            <dd>case independent comparison of UTF-8 encoded strings, stops after 'num' bytes if no NUL byte is seen before</dd>
+
+            <dt>bool imatch_pattern(const char * pattern, dword len_pattern, const char * string, dword len_string)</dt>
+            <dd>
+                simple case independent pattern match for UTF-8 encoded strings - only ``*´´ as meta character, escaped by \2A<br/>
+                always longest match, double asterisk (e.g. "pre*mid*post"), always anchored
+            </dd>
+
+            <dt>int coll(const char * s1, const char * s2)</dt>
+            <dd>case dependent comparison of UTF-8 encoded strings according to collating sequence</dd>
+
+            <dt>int icoll(const char * s1, const char * s2)</dt>
+            <dd>case independent comparison of UTF-8 encoded strings according to collating sequence</dd>
+
+            <dt>const char * next(const char * s, const char * s_end)</dt>
+            <dd>scan for start of UTF-8 character past 's', return start > 's' and < 's_end', 's_end' if not found</dd>
+
+            <dt>const char * prev(const char * s, const char * s_1st)</dt>
+            <dd>scan backward for start of UTF-8 character before 's', return start < 's' and >= 's_1st', 's_1st' is also returned if not found</dd>
+
+            <dt>dword ucs4_char(const char * s, const char * s_end, const char ** next)</dt>
+            <dd>converts the UTF-8 character at 's' to UCS-4, the position of following byte is stored in 'next' if next is non-NULL</dd>
+
+            <dt>dword to_utf8(const char * in, char * out, dword len)</dt>
+            <dd>
+                copy UTF-8 characters from 'in' to 'out', append NUL, return number of bytes written before.<br/>
+                copying ends when NUL or a non-UTF8 character is seen.<br/>
+                if 'len' is does not permit to copy a complete UTF-8 character and NUL<br/>
+                copying ends with the last complete UTF-8 character
+            </dd>
+
+            <dt>dword to_strx(const char * in, char * out, dword len)</dt>
+            <dd>
+                copy NUL terminated UTF-8 string from 'in' to 'out' assuming 'in' contains valid UTF-8 characters only<br/>
+                if 'len' is does not permit to copy a complete UTF-8 character and NUL<br/>
+                copying ends with the last complete UTF-8 character
+            </dd>
+
+            <dt>dword utf8_cnt(const char * in)</dt>
+            <dd>return number of UTF-8 characters in 'in'</dd>
+
+        </dl>
+    </p>
+
+    <h2>UTF-8 / Latin-1 conversions</h2>
+    <p>
+        <dl>
+            <dt>bool may_be_utf8(const char * in)</dt>
+            <dd>check 'in' for valid UTF-8 encoding (plain ASCII is valid too)</dd>
+
+            <dt>bool n_may_be_utf8(const char * in, dword len)</dt>
+            <dd>check 'len' bytes of 'in' for valid UTF-8 encoding (plain ASCII is valid too)</dd>
+
+            <dt>bool must_be_utf8(const char * in)</dt>
+            <dd>check 'in' for valid UTF-8 encoding and at least one non-ASCII character</dd>
+
+            <dt>bool n_must_be_utf8(const char * in, dword len)</dt>
+            <dd>check 'len' bytes of 'in' for valid UTF-8 encoding and at least one non-ASCII character</dd>
+
+            <dt>dword to_latin1(char * inout)</dt>
+            <dd>convert UTF-8 to Latin-1 in place, append NUL, return number of bytes written before</dd>
+
+            <dt>dword to_latin1(const char * in, char * out, dword len)</dt>
+            <dd>convert UTF-8 to Latin-1, append NUL, return number of bytes written before</dd>
+
+            <dt>dword to_latin1_transcribe(const char * in, char * out, dword len)</dt>
+            <dd>convert UTF-8 to Latin-1, transscribe non Latin-1 codes if possible, append NUL, return number of bytes written before</dd>
+
+            <dt>dword to_latin1_xml(const char * in, char * out, dword len)</dt>
+            <dd>convert UTF-8 to Latin-1 XML attribute, append NUL, return number of bytes written before (obsolete)</dd>
+
+            <dt>dword n_to_latin1(const char * in, dword num, char * out, dword len)</dt>
+            <dd>convert 'num' bytes from UTF-8 to Latin-1, copy also NUL bytes, append NUL, return number of bytes written before</dd>
+
+            <dt>dword n_to_latin1_n(const char * in, dword cnt, char * out, dword len)</dt>
+            <dd>convert 'num' bytes from UTF-8 to Latin-1, copy also NUL bytes, don't append NUL, return number of bytes written before</dd>
+
+            <dt>dword from_latin1(const char * in, char * out, dword len)</dt>
+            <dd>convert Latin-1 to UTF-8, append NUL, return number of bytes written before</dd>
+
+            <dt>dword from_latin1_n(const char * in, dword num, char * out, dword len)</dt>
+            <dd>convert 'num' bytes from Latin-1 to UTF-8, append NUL, return number of bytes written before</dd>
+
+            <dt>dword from_latin1_n_len(const char * in, dword num)</dt>
+            <dd>calculate number of bytes required for UTF-8 encoding 'num' bytes of 'in'</dd>
+
+            <dt>dword n_from_latin1_n(const char * in, dword num, char * out, dword len)</dt>
+            <dd>convert 'num' bytes from Latin-1 to UTF-8, copy also NUL bytes, don't append NUL, return number of bytes written</dd>
+
+            <dt>unsigned transcribe_to_basic_latin(char * buf, unsigned size_of_buf)</dt>
+            <dd>
+                convert an UTF-8 string to Latin-1, transcribe characters not available in Latin-1 as far as possible.<br/>
+            </dd>
+        </dl>
+    </p>
+
+    <h2>Latin-1 / UCS-2 conversions</h2>
+    <p>
+        <dl>
+            <dt>dword ucs2_n_to_latin1(const word * in, dword num, char * out, dword len)</dt>
+            <dd>convert 'num' UCS-2 words to Latin-1, stop at NUL word, append NUL byte, return number of bytes written</dd>
+
+            <dt>dword latin1_to_ucs2_n(const char * in, word * out, dword num)</dt>
+            <dd>convert 'num' bytes from Latin-1 to UCS-2, stop at NUL byte, don't append NUL word, return number of words written</dd>;
+        </dl>
+    </p>
+
+    <h2>UCS-2 strings</h2>
+    <p>
+        <dl>
+            <dt>int ucs2_cmp(const word * w1, const word * w2)</dt>
+                <dd>binary comparison of NUL word terminated UCS-2 strings</dd>
+
+            <dt>int ucs2_cmp(const word * w1, dword w1_cnt, const word * w2, dword w2_cnt)</dt>
+                <dd>binary comparison of counted UCS-2 strings, accept embedded NUL words</dd>
+
+            <dt>int ucs2_icmp(const word * w1, const word * w2)</dt>
+                <dd>case independent comparison of NUL word terminated UCS-2 strings</dd>
+
+            <dt>int ucs2_icmp(const word * w1, dword w1_cnt, const word * w2, dword w2_cnt)</dt>
+                <dd>case independent comparison of counted UCS-2 strings, accept embedded NUL words</dd>
+
+            <dt>int ucs2_coll(const word * w1, dword w1_cnt, const word * w2, dword w2_cnt)</dt>
+                <dd>case dependent comparison of counted UUCS-2 encoded strings according to collating sequence</dd>
+
+            <dt>int ucs2_icoll(const word * w1, dword w1_cnt, const word * w2, dword w2_cnt)</dt>
+                <dd>case independent comparison of counted UUCS-2 encoded strings according to collating sequence</dd>
+
+            <dt>dword ucs2_cnt(const word * in)</dt>
+                <dd>return number of non-NUL words in 'in'</dd>
+
+            <dt>dword ucs2_to_ucs2(const word * in, word * out, dword cnt)</dt>
+                <dd>copy NUL word terminated UCS-2 string from 'in' to 'out', append NUL word, return number of words written before</dd>
+
+            <dt>word ucs2_chr2lwr(word w)</dt>
+                <dd>convert UCS-2 character to lower case UCS-2</dd>
+
+            <dt>word ucs2_chr2upr(word w)</dt>
+                <dd>convert UCS-2 character to upper case UCS-2</dd>
+
+            <dt>dword ucs2_to_le_n(const word * in, byte * out, dword cnt)</dt>
+                <dd>write 'cnt' UCS-2 words from 'in' to 'out' in little endian byte order, return number of bytes written (not words!)</dd>
+
+            <dt>dword ucs2_to_net_n(const word * in, byte * out, dword cnt)</dt>
+                 <dd>write 'cnt' UCS-2 words from 'in' to 'out' in network byte order, return number of bytes written (not words!)</dd>
+        </dl>
+    </p>
+
+    <h2>UTF-8 / UCS-2 conversions</h2>
+    <p>
+        <dl>
+            <dt>dword to_ucs2(const char * in, word * out, dword cnt)</dt>
+                <dd>convert UTF-8 string to UCS-2, append NUL word, return number of words written before</dd>
+
+            <dt>dword to_ucs2_n(const char * in, word * out, dword cnt)</dt>
+                <dd>convert UTF-8 string to UCS-2, don't append NUL word, return number of words written</dd>
+
+            <dt>dword n_to_ucs2(const char * in, dword num, word * out, dword cnt)</dt>
+                <dd>convert 'num' bytes from UTF-8 to UCS-2, don't append NUL word, return number of words written</dd>
+
+            <dt>dword from_ucs2(const word * in, char * out, dword len)</dt>
+                <dd>convert NUL terminated UCS-2 to UTF-8, append NUL, return number of bytes written before</dd>
+
+            <dt>dword from_ucs2_n(const word * in, dword num, char * out, dword len)</dt>
+                <dd>convert 'cnt' UCS-2 words (including NUL words) to UTF-8, utf8, append NUL, return number of bytes written before</dd>
+        </dl>
+    </p>
+
+    <h2>UTF-8 / URL conversions</h2>
+    <p>
+        <dl>
+            <dt>dword to_url(const char * in, char * out, dword len)</dt>
+                <dd>convert UTF-8 string to URL-encoded string, append NUL, return number of bytes written before</dd>
+
+            <dt>dword to_url_cfg(const char * in, char * out, dword len)</dt>
+                <dd>
+                    convert UTF-8 string to URL-encoded string suitable as config line argument,
+                    append NUL, return number of bytes written before.<br/>
+                    encoding includes the config line line syntax characters '%', '<', '>', '{', '}', '\r', '\n'.
+                </dd>
+
+            <dt>dword from_url(const char * in, char * out, dword len)</dt>
+                <dd>convert URL-encoded string to UTF-8 string, append NUL, return number of bytes written before</dd>
+
+            <dt>dword from_url(char * inout)</dt>
+                <dd>convert URL-encoded to UTF-8 string string in place, append NUL, return number of bytes written before.<br/>
+        </dl>
+    </p>
+
+    <h2>UTF-8 / Punycode conversions</h2>
+    <p>
+        <dl>
+            <dt>dword to_punycode(const char * in, char * out, dword len)</dt>
+                <dd>convert UTF-8 string tp </dd>
+
+            <dt>dword from_punycode(const char * in, char * out, dword len)</dt>
+                <dd>not implemented yet</dd>
+         </dl>
+    </p>
+
+    <h2>Config Line Options</h2>
+    <p>
+        'case' in function names means ASCII code case indepenent
+    </p>
+    <p>
+        <dl>
+            <dt>char * args_find(int argc, char * argv[], const char * arg)</dt>
+                <dd>
+                    find string 'arg' in 'argv[]', if found return next 'argv[]' entry if existent and not starting with '/', otherwise an empty string.<br/>
+                    usually 'arg' should contain a leading '/', it's not implied.
+                </dd>
+
+            <dt>char * parse_args(int argc, char * argv[], int & i, const char * args_tbl[], int & index, char * & value, int * arg=0, byte decode=0)</dt>
+                <dd>find option value for an option name listed in 'args_tbl[]'.<br/>
+                    an option name "opt-name" in args_tbl[] matches as well "/opt-name" as "/opt-name." in 'argv[]'.
+                    <dl>
+                        <dt>int argc</dt><dd>number of entries in argument vector</dd>
+                        <dt>char * argv[]</dt><dd>argument vector</dd>
+                        <dt>int &amp; i</dt><dd>starting index in argument vector, index of next option name in argument vector after return</dd>
+                        <dt>char * args_tbl[]</dt><dd>NULL terminated list of option names, a leading '/' is implied and must not be specified</dd>
+                        <dt>int &amp; index</dt><dd>returns the index of the matching option in 'args_tbl[]' or -1 if there was no match</dd>
+                        <dt>char * &amp; value</dt><dd>points to begin of (possibley decoded) option value</dd>
+                        <dt>int * arg</dt><dd>returns index of matching option name in 'argv[]'</dd>
+                        <dt>byte decode</dt><dd>decode flags: PARSE_ARGS_DECODE_URL and/or PARSE_ARGS_STRIP_EXCESSIVE_SPACES</dd>
+                    </dl>
+                </dd>
+
+            <dt>bool match(const char * ref, const char * s, char ** ptr)</dt>
+                <dd>if 'ptr' is zero match() is identical to (0 == strcmp(ref,s))<br/>
+                    if 'ptr' is nonzero match() returns true on a match of 'ref' and the head of 's' with 'ptr' pointing to next character in 's'
+                </dd>
+
+            <dt>bool casematch(const char * ref, const char * s, char ** ptr)</dt>
+                <dd>if 'ptr' is zero casematch() is identical to (0 == (strcasecmp(ref,s) == 0))<br/>
+                    if 'ptr' is nonzero casematch() returns true on a case insensitive match of 'ref' and the head of 's' with 'ptr' pointing to next character in 's'
+                </dd>
+
+            <dt>int casecmp(const char * s1, const char * s2)</dt>
+                <dd>identical to strcasecmp() (may be missing in standard library)</dd>
+
+            <dt>int n_casecmp(const char * s1, const char * s2, dword num)</dt>
+                <dd>identical to strncasecmp() (may be missing in standard library)</dd>
+
+            <dt>void caselwr(char * inout)</dt>
+                <dd>convert characters in 'inout' to lower case</dd>
+
+            <dt>void n_caselwr(char * inout, dword num)</dt>
+                <dd>convert 'num' characters in 'inout' to lower case</dd>
+
+            <dt>void caseupr(char * inout)</dt>
+                <dd>convert characters in 'inout' to upper case</dd>
+
+            <dt>void n_caseupr(char * inout, dword num)</dt>
+                <dd>convert 'num' characters in 'inout' to upper case</dd>
+
+            <dt>char chr2lwr(char c)</dt>
+                <dd>return 'c' converted to lower case</dd>
+
+            <dt>char chr2upr(char c)</dt>
+                <dd>return 'c' converted to upper case</dd>
+         </dl>
+    </p>
+
+    <h2>Latin-1 strings</h2>
+    <p>
+        <dl>
+            <dt>int latin1_icmp(const char * s1, const char * s2)</dt>
+                <dd>case independent comparison of Latin-1 encoded strings</dd>
+
+            <dt>int latin1_n_icmp(const char * s1, const char * s2, dword num)</dt>
+                <dd>case independent comparison of Latin-1 encoded strings, stops after 'num' characters if no NUL character is seen before</dd>
+
+            <dt>bool latin1_imatch_pattern(const char * pattern, dword len_pattern, const char * string, dword len_string)</dt>
+                <dd>
+                    simple case independent pattern match for Latin-1 encoded strings - only ``*´´ as meta character, escaped by \2A<br/>
+                    always longest match, double asterisk (e.g. "pre*mid*post"), always anchored
+                </dd>
+
+            <dt>char latin1_chr2lwr(char c)</dt>
+                <dd>return 'c' converted to lower case</dd>
+
+            <dt>char latin1_chr2upr(char c)</dt>
+                <dd>return 'c' converted to upper case</dd>
+        </dl>
+    </p>
+
+    <h2>Plain strings</h2>
+    <p>
+        <dl>
+            <dt>int diff(const char * s1, const char * s2)</dt>
+                <dd>return -1 if the strings 's1' and 's2' are identical, otherwise return the offset of the first first difference</dd>
+
+            <dt>dword to_hexmem(const char * s, byte * mem, dword len)</dt>
+                <dd>
+                    convert the hexadecimal characters (any case) in 's' to their binary representation.<br/>
+                    stop at NUL or after 'len' bytes are written or when a non-hexadecimal character is seen.<br/>
+                    the low order part of last byte is set to zero if not given in 's'.
+                </dd>
+
+            <dt>dword to_hexmem(const char * s, char ** ptr, byte * mem, dword len, bool fill=true)</dt>
+                <dd>
+                    convert the hexadecimal characters (any case) in 's' to their binary representation.<br/>
+                    stop at NUL or after 'len' bytes are written or when a non-hexadecimal character is seen.<br/>
+                    the low order part of last byte is set to zero if not given in 's'.<br/>
+                    if 'fill' is true the remaining bytes of 'mem' are zero filled.<br/>
+                    if 'ptr' is nonzero it points to first not converted character in 's' after return.
+                </dd>
+
+            <dt>char * from_hexmem(const byte * mem, const dword len, char * s)</dt>
+                <dd>convert 'len' bytes of 'mem' to hexadecmal characters in 's', append NUL, return 's'</dd>
+
+            <dt>byte chr2hexval(char c)</dt>
+                <dd>return binary value assigned to hexadecimal character 'c' (any case), return 0xff if 'c' is not a hexadecimal character</dd>
+
+            <dt>dword to_str(const char * in, char * out, dword len)</dt>
+                <dd>copy characters from 'in' to 'out', append NUL, return number of characters written before.<br/>
+                    copying ends when NUL is seen or 'len' -1 characters are written.<br/>
+                    Note: For UTF-8 strings use str::to_strx instead.
+                </dd>
+
+            <dt>dword to_xml(const char * in, char * out, dword len)</dt>
+                <dd>copy 'in' to 'out', replace XML syntax characters by entity reference, append NUL, return number of bytes written before</dd>
+
+            <dt>ulong64 to_id(const char * str)</dt>
+                <dd>copy the characters from 'in' to a 64 bit integer, stop at NUL or after 8 characters, fill up with 0 bytes if necessary</dd>
+
+            <dt>bool to_tm(const char * s, char ** ptr, struct tm & tm)</dt>
+                <dd>convert a string of the format tt.mm.yy-hh.mm.ss to a struct tm, return true if the format was accepted.<br/>
+                    if 'ptr' is nonzero it points to first not converted character in 's' after return.
+                </dd>
+
+            <dt>bool is_dial_string(const char * s)</dt>
+                <dd>returns true if 's' contains only characters accepted as dialable digits by innovaphone devices</dd>
+
+            <dt>dword from_ie_number(const byte * ie, char * out, dword len)</dt>
+                <dd>copy the numer part of info element 'ie' to out, append NUL, return number of bytes written before</dd>
+
+            <dt>bool is_true(const char * s)</dt>
+                <dd>returns true if 's' is nonzeroro and either "true" or "on"</dd>
+
+            <dt>dword n_len(const char * in, dword len)</dt>
+                <dd>return number of non-NUL characters in 'in' or 'len' if no NUL character is found up to 'in' + 'len' - 1</dd>
+
+            <dt>char * strip_whitespace(char * in)
+                <dd>replace trailing whitespace charcters in 'in' by NUL, return address of first non-whitespace character in 'in'</dd>
+
+            <dt>void replace(const char * in, char * out, dword len, const char * placeholder, const char * replace)</dt>
+                <dd>replaces the first occurrence of 'placeholder' in the 'in' buffer by 'replace' and writes the result to the out buffer. The 'out' buffer will always be null-terminated.</dd>
+
+            <dt>dword split(char * in, char * tokens[], dword max_tokens, const char * separator)</dt>
+            <dd>Splits the string in the 'in' buffer into tokens, using a specified 'separator' string to determine where to make each split. The resulting tokens are stored in the 'tokens' array. 'max_tokens' specifies the size of the 'tokens' array. If 'separator' is null or empty, a single token containing the whole string will be returned. Note that the 'in' buffer is modified by this function call. Returns the number of tokens stored in the 'token' array.</dd>
+
+            <dt>dword join(char * out, dword len, char * tokens[], dword num_tokens, const char * separator)</dt>
+            <dd>Joins the strings in the 'tokens' array into a single string using a specified 'separator' string. The result is written to the 'out' buffer. Returns the length of the string written to the 'out' buffer.</dd>
+
+            <dt>char * escape_quoted(char * in, char * &out, unsigned len)</dt>
+                <dd>
+                    copy 'in' to 'out', insert a backslash before each backslash, single or double quote read from 'in',<br/>
+                    append NUL, set 'out' to position after NUL, return initial value of 'out'.
+                </dd>
+
+            <dt>char * escape_quoted_printable(char * in, char * out, unsigned out_size, bool escape_q_string_chars = false)</dt>
+            <dd>
+                Encodes the input buffer using the Quoted-Printable encoding as defined in RFC 2045, but without inserting additional line breaks.<br/>
+                If <code>escape_q_string_chars</code> is <code>true</code>, additionally '?' and '_' are escaped, as needed in the "Q" encoding defined in RFC 1342.
+            </dd>
+
+            <dt>dword fnv1a_hash(const char *s)</dt>
+                <dd>return the 32 bit FNV-1a hash over the characters in 's' not including the terminating NUL</dd>
+
+            <dt>dword fnv1a_hash(const byte *s, word length)</dt>
+                <dd>return the 32 bit FNV-1a hash over 'length' bytes of 's' including NUL bytes</dd>
+        </dl>
+    </p>
+</body>
+
+</html>
+

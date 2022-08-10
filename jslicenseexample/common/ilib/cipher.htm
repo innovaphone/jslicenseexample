@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>innovaphone SDK - cipher.h</title>
+    <!-- Take care to adjust the 3 paths if needed, e. g.: "../../web1/doc" if the file is in the common/interface folder -->
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <script src="../../web1/doc/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <h1>Cipher Library</h1>
+    <p>
+        This library provides functions for encrypting and decrypting data. The following ciphers are currently supported:
+        <dl>
+            <dt>AES</dt>
+            <dd>Block cipher</dd>
+            <dd>Symmetric (same key for encryption and decryption)</dd>
+            <dd>Block size: 128 bit (16 bytes)</dd>
+            <dd>Key sizes: 128 bit (16 bytes), 192 bit (24 bytes), 256 bit (32 bytes)</dd>
+            <dd>State of the art. Considered to be secure.</dd>
+        </dl>
+        <dl>
+            <dt>DES</dt>
+            <dd>Block cipher</dd>
+            <dd>Symmetric (same key for encryption and decryption)</dd>
+            <dd>Block size: 64 bit (8 bytes)</dd>
+            <dd>Key size: 64 bit (8 bytes)</dd>
+            <dd>Effective key strength: 56 bit (7 bytes)</dd>
+            <dd>Legacy and insecure. Should not be used unless needed for compatibility with legacy protocols.</dd>
+        </dl>
+        <dl>
+            <dt>RC4</dt>
+            <dd>Stream cipher</dd>
+            <dd>Symmetric (same key for encryption and decryption)</dd>
+            <dd>Block size: none</dd>
+            <dd>Key size: any</dd>
+            <dd>Keys must be unique and must never be reused.</dd>
+            <dd>Should be considered as breakable.</dd>
+        </dl>
+
+        Block ciphers (AES and DES) can be used in different modes of operation. The following modes are currently supported:
+        <dl>
+            <dt>ECB (Electronic Code Book Mode)</dt>
+            <dd>The size of the data must be a multiple of the block size.</dd>
+            <dd>Each block is encrypted / decrypted with the same key.</dd>
+            <dd>Prone to statistical cryptanalysis. Should not be used unless needed for compatibility with legacy protocols.</dd>
+        </dl>
+        <dl>
+            <dt>CTR (Counter Mode)</dt>
+            <dd>Turns block ciphers into stream ciphers. So any data size can be processed. It doesn't need to be a multiple of the block size.</dd>
+            <dd>Additional to the key an initialization vector (IV) is needed.</dd>
+            <dd>The combination of key and IV must be unique and must never be reused.</dd>
+            <dd>Considered to be secure (unless key and IV are reused).</dd>
+        </dl>
+        <dl>
+            <dt>CFB (Cipher Feedback Mode)</dt>
+            <dd>Turns block ciphers into stream ciphers. So any data size can be processed. It doesn't need to be a multiple of the block size.</dd>
+            <dd>Additional to the key an initialization vector (IV) is needed.</dd>
+            <dd>The combination of key and IV must be unique and must never be reused.</dd>
+            <dd>Considered to be secure (unless key and IV are reused).</dd>
+        </dl>
+        <dl>
+            <dt>GCM (Galois Counter Mode)</dt>
+            <dd>Turns block ciphers into stream ciphers. So any data size can be processed. It doesn't need to be a multiple of the block size.</dd>
+            <dd>Additional to the key an initialization vector (IV) is needed.</dd>
+            <dd>The combination of key and IV must be unique and must never be reused.</dd>
+            <dd>Also it does a message authentication over the plaintext and some optional associated data, like headers (AEAD cipher). This is useful for avoiding the extra CPU power needed for a keyed hash function like HMAC-SHA256.</dd>
+            <dd>Considered to be secure (unless key and IV are reused).</dd>
+        </dl>
+    </p>
+
+    <h2>File information</h2>
+    <table style="margin-left:-12px">
+        <tr><td><b>File</b></td><td>common/ilib/cipher.h<br><br></td></tr>
+        <tr>
+            <td><b>Classes</b></td>
+            <td>
+                <a href="#cipher">Cipher</a><br>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Data types</b></td>
+            <td>
+                <a href="#cipher_t">cipher_t</a><br>
+                <br>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Examples</b></td>
+            <td>
+                <a href="#Example_AES_CTR">Encryption with AES-256 in counter mode</a><br>
+                <a href="#Example_AES_CFB">Encryption with AES-128 in cipher feedback mode</a><br>
+                <a href="#Example_DES">Single block encryption with DES</a><br>
+                <a href="#Example_RC4">Encryption with RC4</a>
+                <br>
+            </td>
+        </tr>
+    </table>
+
+    <h1>Classes</h1>
+    <a name="cipher"><h2>cipher</h2></a>
+    <pre><code class="C++">class Cipher {
+public:
+    Cipher();
+    void Init(cipher_t type, const byte * key, int keyLen, bool encrypt = true, bool makekey = true);
+    void Block(const byte * in, byte * out);
+    void Crypt(const byte * in, byte * out, int len);
+    void CtrCrypt(const byte * in, byte * out, int len, byte * iv);
+    bool GcmCrypt(const byte * aad, int aad_len, const byte * in, byte * out, int len, byte * iv, byte * tag);
+    void CfbCrypt(const byte * in, byte * out, int len, byte * iv);
+    void CbcCrypt(const byte * in, byte * out, int len, byte * iv);
+    void Reset();
+};</code></pre>
+
+    <h3>Overview</h3>
+    <p>
+        The cipher class defines a uniform interface for encrypting and decrypting data using different algorithms. Please note that currently only a small selection of ciphers and modes of operation is supported.
+    </p>
+
+    <h3>Public functions</h3>
+    <div class="fnhead">Init</div>
+    <dd>
+        Initializes the internal state of the object and sets the algorithm to be used.
+
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param"><a href="#cipher_t">cipher_t</a> <b>type</b></td>
+                <td>
+                    The algorithm to be used.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">const byte * <b>key</b></td>
+                <td>
+                    A buffer containing the encryption / decryption key.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">int <b>keyLen</b></td>
+                <td>
+                    The size of the key in bytes. Depending on the type the following key sizes are supported.
+                    <dl>
+                        <dt>CIPHER_AES</dt>
+                        <dd>16 (AES-128)</dd>
+                        <dd>24 (AES-192)</dd>
+                        <dd>32 (AES-256)</dd>
+                        <dt>CIPHER_DES</dt>
+                        <dd>8</dd>
+                        <dt>CIPHER_RC4</dt>
+                        <dd>any positive value</dd>
+                    </dl>
+                </td>
+            </tr>
+            <tr>
+                <td class="param">bool <b>encrypt</b></td>
+                <td>
+                    true if the data shall be encrypted. false if the data shall be decrypted.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">bool <b>makekey</b></td>
+                <td>
+                    true if the key is to be generated/modified by means of a protocol-specific method. false if the key is to be taken as-is (currently for DES only).
+                </td>
+             </tr>
+        </table>
+
+        <h4>Remarks</h4>
+        The init function has to be called before using any other functions of the object.
+    </dd>
+
+    <div class="fnhead">Block</div>
+    <dd>
+        The function encrypts / decrypts a single block of data.
+
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">const byte * <b>in</b></td>
+                <td>
+                    A buffer containing the data that shall be encrypted / decrypted. The valid buffer sizes for the individual ciphers are:
+                    <dl>
+                        <dt>CIPHER_AES</dt>
+                        <dd>16</dd>
+                        <dt>CIPHER_DES</dt>
+                        <dd>8</dd>
+                    </dl>
+                </td>
+            </tr>
+            <tr>
+                <td class="param">const byte * <b>out</b></td>
+                <td>
+                    A buffer to write the encrypted / decrypted data. It must have the same size as the in buffer.
+                </td>
+            </tr>
+        </table>
+
+        <h4>Remarks</h4>
+        The function is not implemented for RC4. If the object was initialized with CIPHER_RC4 the function will fail with an assertion.
+    </dd>
+
+    <div class="fnhead">Crypt</div>
+    <dd>
+        Implements the ECB mode of operation for AES and DES, and regular encryption for RC4.
+
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">const byte * <b>in</b></td>
+                <td>
+                    A buffer containing the data that shall be encrypted / decrypted.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">byte * <b>out</b></td>
+                <td>
+                    A buffer to write the encrypted / decrypted data. It must be big enough to contain len bytes.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">int <b>len</b></td>
+                <td>
+                    The number of bytes that shall be encrypted / decrypted.
+                    <dl>
+                        <dt>CIPHER_AES</dt>
+                        <dd>multiple of 16 bytes</dd>
+                        <dt>CIPHER_RC4</dt>
+                        <dd>any positive value</dd>
+                    </dl>
+                </td>
+            </tr>
+        </table>
+
+        <h4>Remarks</h4>
+        The function is not implemented for DES. If the object was initialized with CIPHER_DES the function will fail with an assertion.
+    </dd>
+
+    <div class="fnhead">CtrCrypt</div>
+    <dd>
+        Implementation of the counter mode of operation. 
+
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">const byte * <b>in</b></td>
+                <td>
+                    A buffer containing the data that shall be encrypted / decrypted.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">byte * <b>out</b></td>
+                <td>
+                    A buffer to write the encrypted / decrypted data. It must be big enough to contain len bytes.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">int <b>len</b></td>
+                <td>
+                    Any positive number of bytes that shall be encrypted.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">byte * <b>iv</b></td>
+                <td>
+                    The initialization vector for counter mode. The size must match the block size of the underlying cipher (16 bytes for AES).
+                    The number in the iv buffer is incremented, so it can be reused for subsequent encryptions.
+                    If it isn't reused but a new iv is set by the application, the Reset() function needs to be called before.
+                </td>
+            </tr>
+        </table>
+
+        <h4>Remarks</h4>
+        The function is not implemented for DES and RC4. If the object was initialized with CIPHER_DES or CIPHER_RC4 the function will fail with an assertion.
+    </dd>
+
+    <div class="fnhead">CfbCrypt</div>
+    <dd>
+        Implementation of the cipher feedback mode of operation.
+
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">const byte * <b>in</b></td>
+                <td>
+                    A buffer containing the data that shall be encrypted / decrypted.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">byte * <b>out</b></td>
+                <td>
+                    A buffer to write the encrypted / decrypted data. It must be big enough to contain len bytes.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">int <b>len</b></td>
+                <td>
+                    Any positive number of bytes that shall be encrypted.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">byte * <b>iv</b></td>
+                <td>
+                    The initialization vector for cipher feedback mode. The size must match the block size of the underlying cipher (16 bytes for AES).
+                    The content of the buffer is updated, so it can be reused for subsequent encryptions / decryptions.
+                </td>
+            </tr>
+        </table>
+
+        <h4>Remarks</h4>
+        The function is not implemented for DES and RC4. If the object was initialized with CIPHER_DES or CIPHER_RC4 the function will fail with an assertion.
+    </dd>
+
+    <div class="fnhead">CbcCrypt</div>
+    <dd>
+        Implementation of the cipher block chaining mode of operation.
+
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">const byte * <b>in</b></td>
+                <td>
+                    A buffer containing the data that shall be encrypted / decrypted.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">byte * <b>out</b></td>
+                <td>
+                    A buffer to write the encrypted / decrypted data. It must be big enough to contain len bytes.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">int <b>len</b></td>
+                <td>
+                    The number of bytes that shall be encrypted / decrypted. Must be a multiple of the block size (8 bytes for DES).
+                </td>
+            </tr>
+            <tr>
+                <td class="param">byte * <b>iv</b></td>
+                <td>
+                    The initialization vector for cipher block chaining mode. The size must match the block size of the underlying cipher (8 bytes for DES).
+                    The content of the buffer is updated, so it can be reused for subsequent encryptions / decryptions.
+                </td>
+            </tr>
+        </table>
+
+        <h4>Remarks</h4>
+        The function is not implemented for RC4. If the object was initialized with CIPHER_RC4 the function will fail with an assertion.
+    </dd>
+
+    <div class="fnhead">Reset</div>
+    <dd>
+        This function is only needed in combination with CtrCrypt. It must be called each time a new initialization vector defined by the application is used.
+        <h4>Remarks</h4>
+        The function is not implemented for DES and RC4. If the object was initialized with CIPHER_DES or CIPHER_RC4 the function will fail with an assertion.
+    </dd>
+
+    <h1>Data types</h1>
+    <h2 id="cipher_t">cipher_t</h2>
+    <pre><code style="laguage-cpp">enum cipher_t {
+    CIPHER_UNDEFINED,
+    CIPHER_DES,
+    CIPHER_AES,
+    CIPHER_RC4
+};</code></pre>
+
+    <h3>Overview</h3>
+    The cipher_t enum defines all ciphers supported by the library.
+
+    <h3>Values</h3>
+    <table style="margin-left: 20px">
+        <tr><td><b>CIPHER_UNDEFINED</b></td><td>Used internally to identify uninitialized objects.</td></tr>
+        <tr><td><b>CIPHER_DES</b></td><td></td></tr>
+        <tr><td><b>CIPHER_AES</b></td><td></td></tr>
+        <tr><td><b>CIPHER_RC4</b></td><td></td></tr>
+    </table>
+
+    <h3>Remarks</h3>
+    The old algorithms DES and RC4 are insecure. They should not be used for new projects.
+    Please use AES instead.
+
+    <h1> Code Example </h1>
+    <a name="Example_AES_CTR"><h2>Encryption with AES-256 in counter mode</h2></a>
+    <pre class="sample"><code style="language-cpp">byte key[32] = { /*...*/ };
+cipher c;
+c.Init(CIPHER_AES, key, 32, true);
+
+// encryption of the in1 buffer
+
+byte iv1[16] = { /*...*/ };
+byte in1[37] = { /*...*/ };
+byte out1[37] = { /*...*/ };
+
+c.CtrCrypt(in1, out1, 37, iv1);
+
+// encryption of the in2 buffer in multiple passes
+
+byte iv2[16] = { /*...*/ };
+byte in2[132] = { /*...*/ };
+byte out2[132] = { /*...*/ };
+
+c.Reset(); // needed because a new IV is set by the application
+c.CtrCrypt(in2, out2, 64, iv2);
+c.CtrCrypt(in2 + 64, out2 + 64, 64, iv2);
+c.CtrCrypt(in2 + 128, out2 + 128, 4, iv2);
+</code></pre>
+
+        <a name="Example_AES_CFB"><h2>Encryption with AES-128 in cipher feedback mode</h2></a>
+    <pre class="sample"><code style="language-cpp">byte key[16] = { /*...*/ };
+cipher c;
+c.Init(CIPHER_AES, key, 16, true);
+
+// encryption of the in1 buffer
+
+byte iv1[16] = { /*...*/ };
+byte in1[37] = { /*...*/ };
+byte out1[37] = { /*...*/ };
+
+c.CfbCrypt(in1, out1, 37, iv1);
+
+// encryption of the in2 buffer in multiple passes
+
+byte iv2[16] = { /*...*/ };
+byte in2[132] = { /*...*/ };
+byte out2[132] = { /*...*/ };
+
+c.CfbCrypt(in2, out2, 64, iv2);
+c.CfbCrypt(in2 + 64, out2 + 64, 64, iv2);
+c.CfbCrypt(in2 + 128, out2 + 128, 4, iv2);
+</code></pre>
+
+    <a name="Example_DES"><h2>Single block encryption with DES</h2></a>
+    <pre class="sample"><code style="language-cpp">cipher c;
+byte key[8] = { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 };
+byte plaintext[8] = { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+byte ciphertext[8];
+byte plaintext_check[8];
+
+// encrypt
+c.Init(CIPHER_DES, key, 8, true);
+c.Block(plaintext, ciphertext);
+
+// decrypt
+c.Init(CIPHER_DES, key, 8, false);
+c.Block(ciphertext, plaintext_check);
+
+if (memcmp(plaintext, plaintext_check, 8) == 0) {
+    debug->iprintf("decryption OK");
+}
+else {
+    debug->iprintf("decryption failed");
+}
+</code></pre>
+
+    <a name="Example_RC4"><h2>Encryption with RC4</h2></a>
+    <pre class="sample"><code style="language-cpp">byte key[317] = { /*...*/ };
+byte plaintext[510] = { /*...*/ };
+byte ciphertext[510];
+
+cipher c;
+c.Init(CIPHER_RC4, key, sizeof(key), true);
+c.Crypt(plaintext, ciphertext, sizeof(plaintext));
+</code></pre>
+</body>
+</html>

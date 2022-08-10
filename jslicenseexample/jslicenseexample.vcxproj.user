@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ShowAllFiles>true</ShowAllFiles>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <RemoteTarget>769116866;172.31.29.123 (username=, port=22, authentication=Password)</RemoteTarget>
+    <RemoteDebuggerCommandArguments>--app-name=jslicenseexample --app-domain=test.com --app-password=pwd --webserver-path=jslicenseexample --db-name=jslicenseexample --db-user=jslicenseexample --db-password=jslicenseexample --service-id=jslicenseexample</RemoteDebuggerCommandArguments>
+  </PropertyGroup>
+</Project>

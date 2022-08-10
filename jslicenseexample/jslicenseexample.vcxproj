@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5dcca249-c705-4cc5-b255-5678c5bf9b40}</ProjectGuid>
+    <Keyword>Linux</Keyword>
+    <RootNamespace>jslicenseexample</RootNamespace>
+    <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
+    <ApplicationType>Linux</ApplicationType>
+    <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
+    <TargetLinuxPlatform>Generic</TargetLinuxPlatform>
+    <LinuxProjectType>{FC1A4D80-50E9-41DA-9192-61C0DBAA00D2}</LinuxProjectType>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ShowAllFiles>true</ShowAllFiles>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <BuildCommandLine>call common/build/buildnum jslicenseexample.mak x86_64 "DEBUG=1"</BuildCommandLine>
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+    <ReBuildCommandLine>make -f jslicenseexample.mak clean-x86_64 DEBUG=1 &amp;&amp; call common/build/buildnum jslicenseexample.mak clean-x86_64 "DEBUG=1"</ReBuildCommandLine>
+    <CleanCommandLine>make -f jslicenseexample.mak clean-x86_64 DEBUG=1</CleanCommandLine>
+    <ExecutablePath>$(innovaphone-sdk)\app-platform-buildtls;$(innovaphone-sdk)\x86_64-7.2.0-linux-gnu\bin;$(ExecutablePath)</ExecutablePath>
+    <RemoteDebuggerCommand>/apps/jslicenseexample/jslicenseexample</RemoteDebuggerCommand>
+    <DebuggerFlavor>LinuxDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <BuildCommandLine>call common/build/buildnum jslicenseexample.mak arm "DEBUG=1"</BuildCommandLine>
+    <ReBuildCommandLine>make -f jslicenseexample.mak clean-arm DEBUG=1 &amp;&amp; call common/build/buildnum jslicenseexample.mak arm "DEBUG=1"</ReBuildCommandLine>
+    <CleanCommandLine>make -f jslicenseexample.mak clean-arm DEBUG=1</CleanCommandLine>
+    <ExecutablePath>$(innovaphone-sdk)\app-platform-buildtls;$(innovaphone-sdk)\arm-7.2.0-linux-gnu\bin;$(ExecutablePath)</ExecutablePath>
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+    <RemoteDebuggerCommand>/apps/jslicenseexample/jslicenseexample</RemoteDebuggerCommand>
+    <DebuggerFlavor>LinuxDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+    <BuildCommandLine>call common/build/buildnum jslicenseexample.mak arm</BuildCommandLine>
+    <ReBuildCommandLine>make -f jslicenseexample.mak clean-arm &amp;&amp; call common/build/buildnum jslicenseexample.mak arm</ReBuildCommandLine>
+    <ExecutablePath>$(innovaphone-sdk)\app-platform-buildtls;$(innovaphone-sdk)\arm-7.2.0-linux-gnu\bin;$(ExecutablePath)</ExecutablePath>
+    <CleanCommandLine>make -f jslicenseexample.mak clean-arm</CleanCommandLine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <BuildCommandLine>call common/build/buildnum jslicenseexample.mak arm64</BuildCommandLine>
+    <ReBuildCommandLine>make -f jslicenseexample.mak clean-arm64 &amp;&amp; call common/build/buildnum jslicenseexample.mak arm64</ReBuildCommandLine>
+    <CleanCommandLine>make -f jslicenseexample.mak clean-arm64</CleanCommandLine>
+    <ExecutablePath>$(innovaphone-sdk)\app-platform-buildtls;$(innovaphone-sdk)\aarch64-7.2.0-linux-gnu\bin;$(ExecutablePath)</ExecutablePath>
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <BuildCommandLine>call common/build/buildnum jslicenseexample.mak arm64 "DEBUG=1"</BuildCommandLine>
+    <ReBuildCommandLine>make -f jslicenseexample.mak clean-arm64 DEBUG=1 &amp;&amp; call common/build/buildnum jslicenseexample.mak arm64 "DEBUG=1"</ReBuildCommandLine>
+    <CleanCommandLine>make -f jslicenseexample.mak clean-arm64 DEBUG=1</CleanCommandLine>
+    <ExecutablePath>$(innovaphone-sdk)\app-platform-buildtls;$(innovaphone-sdk)\aarch64-7.2.0-linux-gnu\bin;$(ExecutablePath)</ExecutablePath>
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+    <RemoteDebuggerCommand>/apps/jslicenseexample/jslicenseexample</RemoteDebuggerCommand>
+    <DebuggerFlavor>LinuxDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <BuildCommandLine>call common/build/buildnum jslicenseexample.mak x86_64</BuildCommandLine>
+    <ReBuildCommandLine>make -f jslicenseexample.mak clean-x86_64 &amp;&amp; call common/build/buildnum jslicenseexample.mak x86_64</ReBuildCommandLine>
+    <CleanCommandLine>make -f jslicenseexample.mak clean-x86_64</CleanCommandLine>
+    <ExecutablePath>$(innovaphone-sdk)\app-platform-buildtls;$(innovaphone-sdk)\x86_64-7.2.0-linux-gnu\bin;$(ExecutablePath)</ExecutablePath>
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="build-release.bat" />
+    <None Include="build.ps1" />
+    <None Include="jslicenseexample.mak" />
+    <None Include="jslicenseexample\jslicenseexample.mak" />
+    <None Include="jslicenseexample\config.json" />
+    <None Include="jslicenseexample\plugins.json" />
+    <None Include="jslicenseexample\innovaphone-jslicenseexampleservice.js" />
+    <None Include="jslicenseexample\httpfiles\httpfiles.mak" />
+    <None Include="jslicenseexample\httpfiles\innovaphone-jslicenseexample.css" />
+    <None Include="jslicenseexample\httpfiles\innovaphone-jslicenseexample.htm" />
+    <None Include="jslicenseexample\httpfiles\innovaphone-jslicenseexample.js" />
+    <None Include="jslicenseexample\httpfiles\innovaphone-jslicenseexampleadmin.htm" />
+    <None Include="jslicenseexample\httpfiles\innovaphone-jslicenseexampleadmin.js" />
+    <None Include="jslicenseexample\httpfiles\innovaphone-jslicenseexampletexts.js" />
+    <None Include="jslicenseexample\httpfiles\innovaphone.jslicenseexamplemanager.css" />
+    <None Include="jslicenseexample\httpfiles\innovaphone.jslicenseexamplemanager.js" />
+    <None Include="jslicenseexample\httpfiles\innovaphone.jslicenseexamplemanagertexts.js" />
+    <None Include="readme.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="jslicenseexample\httpfiles\innovaphone-jslicenseexample.png" />
+    <Image Include="jslicenseexample\httpfiles\innovaphone-jslicenseexampleadmin.png" />
+    <Image Include="jslicenseexample\jslicenseexample.png" />
+  </ItemGroup>
+  <ItemDefinitionGroup />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+  <ProjectExtensions>
+    <innovaphone>
+      <ProjectType>JSAPP</ProjectType>
+      <SDKVersion>13r3</SDKVersion>
+    </innovaphone>
+  </ProjectExtensions>
+</Project>

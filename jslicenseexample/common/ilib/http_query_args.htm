@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>innovaphone SDK - http query arguments Implementation</title>
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <script src="../../web1/doc/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <h1>HttpQueryArgs</h1>
+    <p>
+        Possibility to parse the http query arguments of an URL.
+    </p>
+    <h2>File information</h2>
+    <table style="margin-left:-12px">
+        <tr><td><b>File</b></td><td>common/ilib/http_query_args.h<br><br></td></tr>
+        <tr>
+            <td><b>Classes</b></td>
+            <td>
+                <a href="#HttpQueryArgs">HttpQueryArgs</a><br>
+                <a href="#HttpQueryArg">HttpQueryArg</a><br>
+                <br>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Examples</b></td>
+            <td>
+                <a href="#ExampleHttpQueryArgs">Use of HttpQueryArgs</a><br>
+                <br>
+            </td>
+        </tr>
+    </table>
+    <h1>HttpQueryArgs</h1>
+    <a name="HttpQueryArgs"><h2>HttpQueryArgs</h2></a>
+    <pre><code class="language-cpp">class HttpQueryArgs {
+public:
+    <a href="#HttpQueryArgs" style="text-decoration:none;">HttpQueryArgs(char * query)</a>;
+    <a href="#Current" style="text-decoration:none;">class HttpQueryArg * Current()</a>;
+    <a href="#Next" style="text-decoration:none;">class HttpQueryArg * Next()</a>;
+};</code></pre>
+    
+    <h3>Public functions</h3>
+    <div class="fnhead" id="HttpQueryArgs">HttpQueryArgs (constructor)</div>
+    <dl>
+        <dd>
+            <h4>Parameters</h4>
+            <table style="margin-left:-12px">
+            <tr><td class="param">char * <b>query </b></td><td>A <code>char</code> pointer to the query string, which will be modified!<br>
+            The internal parser tries to find the first occurence of '?' which indicates the start of the HTTP query arguments.</td></tr>
+            </table>
+        </dd>
+    </dl>
+
+    <div class="fnhead" id="Current">Current (public function)</div>
+    <dl>
+        <dd>
+            <h4>Return value</h4>
+            <table style="margin-left:-12px">
+            <tr>
+                <td class="param">class HttpQueryArg *</td>
+                <td>
+                    The current http query argument.
+                </td>
+            </tr>
+        </table>
+        </dd>
+    </dl>
+    
+    <div class="fnhead" id="Next">Next (public function)</div>
+    <dl>
+        <dd>
+            <h4>Return value</h4>
+            <table style="margin-left:-12px">
+            <tr>
+                <td class="param">class HttpQueryArg *</td>
+                <td>
+                    The next http query argument.
+                </td>
+            </tr>
+        </table>
+        </dd>
+    </dl>
+    
+    <h1>HttpQueryArg</h1>
+    <a name="HttpQueryArg"><h2>HttpQueryArg</h2></a>
+    <pre><code class="language-cpp">class HttpQueryArg {
+public:
+    <a href="#HttpQueryArgName" style="text-decoration:none;">char * name</a>;
+    <a href="#HttpQueryArgValue" style="text-decoration:none;">char * value</a>;
+};</code></pre>
+    
+    <h3>Public variables</h3>
+    <div class="fnhead" id="HttpQueryArgName">A <code>char</code> pointer to the name of the http query argument.</div>
+    <div class="fnhead" id="HttpQueryArgValue">A <code>char</code> pointer to the value of the http query argument.</div>
+    
+    <h1 id="ExampleHttpQueryArgs">Example</h1>
+    The example is based on a WebserverPluginHttpListenResult, where you receive a <code>char</code> pointer resourceName which contains the query arguments.<br><br>
+    <pre><code class="C++">for (class HttpQueryArgs args(resourceName); args.Current(); args.Next()) {
+    class HttpQueryArg * arg = args.Current();
+    if (!strcasecmp(arg->name, "msg")) {
+        debug->iprintf("The argument msg has the value %s", arg->value);
+    }
+}
+</code></pre>
+</body>
+</html>

@@ -1,0 +1,20 @@
+
+body {
+    background-color:var(--bg);
+    color:var(--text-standard);
+}
+
+div.button {
+    position:absolute;
+    left:10px;
+    top:10px;
+    box-sizing:border-box;
+    width:calc(100% - 20px);
+    height:40px;
+    padding:10px;
+    background-color:var(--button);
+    color:var(--text-standard);
+    font-size:14px;
+    text-align:center;
+    cursor:pointer;
+}

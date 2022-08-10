@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32602.291
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jslicenseexample", "jslicenseexample\jslicenseexample.vcxproj", "{5DCCA249-C705-4CC5-B255-5678C5BF9B40}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Release|ARM = Release|ARM
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Debug|ARM.ActiveCfg = Debug|ARM
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Debug|ARM.Build.0 = Debug|ARM
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Debug|ARM.Deploy.0 = Debug|ARM
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Debug|ARM64.Build.0 = Debug|ARM64
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Debug|x64.ActiveCfg = Debug|x64
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Debug|x64.Build.0 = Debug|x64
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Debug|x64.Deploy.0 = Debug|x64
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Release|ARM.ActiveCfg = Release|ARM
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Release|ARM.Build.0 = Release|ARM
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Release|ARM.Deploy.0 = Release|ARM
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Release|ARM64.ActiveCfg = Release|ARM64
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Release|ARM64.Build.0 = Release|ARM64
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Release|ARM64.Deploy.0 = Release|ARM64
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Release|x64.ActiveCfg = Release|x64
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Release|x64.Build.0 = Release|x64
+		{5DCCA249-C705-4CC5-B255-5678C5BF9B40}.Release|x64.Deploy.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BD22FF7B-7100-43CA-88CA-A9006F6EEEA5}
+	EndGlobalSection
+EndGlobal

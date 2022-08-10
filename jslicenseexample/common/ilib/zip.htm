@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>innovaphone SDK - zip.h</title>
+    <!-- Take care to adjust the 3 paths if needed, e. g.: "../../web1/doc" if the file is in the common/interface folder -->
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <script src="../../web1/doc/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <h1>ZIP Library</h1>
+    <p>
+        This library can be used to create simple uncompressed ZIP files.
+    </p>
+
+    <h2>File information</h2>
+    <table style="margin-left:-12px">
+        <tr><td><b>File</b></td><td>common/ilib/zip.h<br><br></td></tr>
+        <tr>
+            <td><b>Classes</b></td>
+            <td>
+                <a href="#hash">Zip</a><br>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Examples</b></td>
+            <td>
+                <a href="#Example">Creating a ZIP file</a><br>
+                <br>
+            </td>
+        </tr>
+    </table>
+
+    <h1>Classes</h1>
+    <a name="Zip"><h2>zip</h2></a>
+    <pre><code class="C++">class Zip {
+public:
+    Zip();
+    void Init(byte * out, byte * temp);
+    void AddFile(const char * filename, const byte * data, unsigned len);
+    unsigned Final();
+};</code></pre>
+
+    <h3>Public functions</h3>
+    <div class="fnhead">Init</div>
+    <dd>
+        Initializes the internal state of the object and sets the output and a temporary buffer.
+
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">byte * <b>out</b></td>
+                <td>
+                    The buffer that shall be used to write the encoded ZIP file. Note that the buffer must be big enough to hold the entire ZIP file.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">byte * <b>temp</b></td>
+                <td>
+                    A temporary buffer that is used to cache the directory information created at each call to AddFile. Note that the buffer must be big enough to hold the CDH structure of the ZIP file.
+                </td>
+            </tr>
+        </table>
+
+        <h4>Remarks</h4>
+        The Init function has to be called before using any other functions of the object.
+    </dd>
+    <div class="fnhead">AddFile</div>
+    <dd>
+        Adds a file.
+
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">const char * <b>filename</b></td>
+                <td>
+                    The filename.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">const byte * <b>data</b></td>
+                <td>
+                    The content data of the file.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">unsigned <b>len</b></td>
+                <td>
+                    The size of the file.
+                </td>
+            </tr>
+        </table>
+
+        <h4>Remarks</h4>
+        This function can be called mupltiple times.
+    </dd>
+
+    <div class="fnhead">Final</div>
+    <dd>
+        Finalizes the ZIP file and writes it to the output buffer given with the Init function.
+
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">void * <b>out</b></td>
+                <td>
+                    The output buffer to write the hash value in binary form.
+                    The buffer size must match the hash size defined by the algorithm.
+                </td>
+            </tr>
+        </table>
+
+        <h4>Remarks</h4>
+        The <a href="#hash_size">size</a> function can be used to determine the needed output buffer size.
+    </dd>
+
+
+    <h1> Code Example </h1>
+    <h2 id="Example">Creating a ZIP file.</h2>
+    <pre class="sample"><code style="language-cpp">byte zipFile[2048];
+byte tmp[1024];
+
+Zip zip;
+zip.Init(zipFile, tmp);
+zip.AddFile("manifest.json", manifestData, manifestLen);
+zip.AddFile("icon.png", iconData, iconLen);
+unsigned zipFileLen = zip.Final();
+</code></pre>
+
+</body>
+</html>

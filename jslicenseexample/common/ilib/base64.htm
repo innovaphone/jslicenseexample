@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>innovaphone SDK - base64.h</title>
+    <!-- Take care to adjust the 3 paths if needed, e. g.: "../../web1/doc" if the file is in the common/interface folder -->
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <script src="../../web1/doc/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <h1>Base64 Library</h1>
+    <p>
+        Base64 is an encoding for representing arbitrary data as a printable ASCII string. 4 Bytes in base64 encoding represent 3 Bytes of the data.
+    </p>
+
+    <h2>File information</h2>
+    <table style="margin-left:-12px">
+        <tr><td><b>File</b></td><td>common/ilib/base64.h<br><br></td></tr>
+        <tr>
+            <td><b>Public functions</b></td>
+            <td>
+                <a href="#encode_base64">encode_base64</a><br>
+                <a href="#decode_base64">decode_base64</a><br>
+                <a href="#decode_base64_bin">decode_base64_bin</a><br>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Examples</b></td>
+            <td>
+                <a href="#Example_encode_base64">encode_base64</a><br>
+                <a href="#Example_decode_base64">decode_base64</a><br>
+                <a href="#Example_decode_base64_bin">decode_base64_bin</a><br>
+                <br>
+            </td>
+        </tr>
+    </table>
+
+    <h1>Public functions</h1>
+    <div class="fnhead" id="encode_base64">encode_base64</div>
+    <dd>
+        Encodes arbitrary data into a null-terminated base64 string. This increases the needed space by 4/3 plus one byte for the null-termination.
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">const byte * <b>in</b></td>
+                <td>
+                    The data that shall be encoded.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">char * <b>out</b></td>
+                <td>
+                    The function writes the null-terminated base64 string to this buffer. The buffer has to be large enough to contain 4/3 * len + 1 bytes.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">int <b>len</b></td>
+                <td>
+                    The number of bytes that shall be encoded.
+                </td>
+            </tr>
+        </table>
+        <h4>Return value</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">dword</td>
+                <td>
+                    The number of bytes that have been written to the out buffer.
+                </td>
+            </tr>
+        </table>
+    </dd>
+
+    <div class="fnhead" id="decode_base64">decode_base64</div>
+    <dd>
+        Decodes a base64 string into a null-terminated plain string.
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">const char * <b>in</b></td>
+                <td>
+                    The base64 string to be decoded.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">byte * <b>out</b></td>
+                <td>
+                    The function writes the decoded data to this buffer and places an additional null byte at the end.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">int <b>n</b></td>
+                <td>
+                    The number of bytes in the in buffer to be decoded.
+                </td>
+            </tr>
+        </table>
+        <h4>Return value</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">dword</td>
+                <td>
+                    The number of bytes that have been written to the out buffer.
+                </td>
+            </tr>
+        </table>
+    </dd>
+
+    <div class="fnhead" id="decode_base64_bin">decode_base64_bin</div>
+    <dd>
+        Decodes a null-terminated base64 string.
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">const char * <b>in</b></td>
+                <td>
+                    The null-terminated base64 string to be decoded.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">byte * <b>out</b></td>
+                <td>
+                    The function writes the decoded data to this buffer.
+                </td>
+            </tr>
+            <tr>
+                <td class="param">unsigned <b>size_of_out</b></td>
+                <td>
+                    The size of the out buffer.
+                </td>
+            </tr>
+        </table>
+        <h4>Return value</h4>
+        <table style="margin-left:-12px">
+            <tr>
+                <td class="param">dword</td>
+                <td>
+                    The number of bytes that have been written to the out buffer.
+                </td>
+            </tr>
+        </table>
+    </dd>
+
+
+
+    <h1> Code Example </h1>
+    <a name="Example_encode_base64"><h2>encode_base64</h2></a>
+    <pre class="sample" style="height: 100px;"><code style="language-cpp">const char * in = "This is an example text";
+char out[64];
+dword out_len = encode_base64(in, out, strlen(in));
+</code></pre>
+
+    <a name="Example_decode_base64"><h2>decode_base64</h2></a>
+    <pre class="sample" style="height: 100px;"><code style="language-cpp">const char * in = "VGhpcyBpcyBhbiBleGFtcGxlIHRleHQ=";
+char out[64];
+dword out_len = decode_base64(in, out, strlen(in));
+</code></pre>
+
+    <a name="Example_decode_base64"><h2>decode_base64_bin</h2></a>
+    <pre class="sample" style="height: 100px;"><code style="language-cpp">const char * in = "VGhpcyBpcyBhbiBleGFtcGxlIHRleHQ=";
+char out[64];
+dword out_len = decode_base64_bin(in, out, sizeof(out));
+</code></pre>
+</body>
+</html>

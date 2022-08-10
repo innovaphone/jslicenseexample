@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>innovaphone SDK - Uri</title>
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <script src="../../web1/doc/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <h1>URI Dissector</h1>
+    <p>
+		The URI dissector is a helper class to dissect an URI into its different components.
+	</p>
+	
+    <h2>File information</h2>
+    <table style="margin-left:-12px">
+        <tr><td><b>File</b></td><td>common/ilib/uri.h<br/><br/></td></tr>
+        <tr><td><b>Classes</b></td><td>
+                                       <a href="#uri_dissector">uri_dissector</a><br/>
+                                       <br/>
+                                   </td></tr>
+        <tr><td><b>Examples</b></td><td>
+                                        <a href="#ExampleURI">URI dissection</a><br/>
+                                        <br/>
+                                    </td></tr>
+    </table>
+	
+	
+	<h1>Classes</h1>
+    <a name="uri_dissector"><h2>uri_dissector</h2></a>
+    <pre><code class="C++">class uri_dissector {
+public:
+<a href="#members" style="text-decoration:none;">
+	char *scheme, *e_scheme;      /* e.g.: http */
+	char *hier, *e_hier;          /* hierarchy e.g.: // */
+	char *usr, *e_usr;            /* user */
+	char *pwd, *e_pwd;            /* password */
+	char *ip, *e_ip;              /* host part is an ip address */
+	char *fqdn, *e_fqdn;          /* host part is a fully qualified domain name */
+	char *port, *e_port;          /* port past ip/fqdn */
+	char *path, *e_path;
+	char *file, *e_file;
+	char *anchor, *e_anchor;      /* eg: #bla */
+	char *query, *e_query;        /* '?' cgi query string */
+	char *params, *e_params;      /* ';' host parameters */</a>
+
+	<a href="#uri_dissector" style="text-decoration:none;">uri_dissector();</a>
+
+	<a href="#dissect_uri" style="text-decoration:none;">bool dissect_uri(char *uri);</a>
+	<a href="#path_to_argv" style="text-decoration:none;">bool path_to_argv(char *buf, int sz, int &argc, char * argv[]);</a>
+	<a href="#querystring_to_argv" style="text-decoration:none;">bool querystring_to_argv(char *buf, int sz, int &argc, char * argv[]);</a>
+
+#define COMPOSE_SCHEME  0x01
+#define COMPOSE_HIER    0x02
+#define COMPOSE_USR     0x04
+#define COMPOSE_PWD     0x08
+#define COMPOSE_HOST    0x10
+#define COMPOSE_PORT    0x20
+#define COMPOSE_PATH    0x40
+#define COMPOSE_FILE    0x80
+#define COMPOSE_ANCHOR  0x100
+#define COMPOSE_QUERY   0x200
+#define COMPOSE_PARAMS  0x400
+
+#define COMPOSE_ALL     0xFFFFFFFF
+#define COMPOSE_ALL_NO_USERPWD COMPOSE_ALL&~COMPOSE_USR&~COMPOSE_PWD
+
+	<a href="#compose" style="text-decoration:none;">char* compose(char *buf, dword len_buf, dword flags = COMPOSE_ALL);</a>
+};</code></pre>
+
+    <h3>Overview</h3>
+    The uri_dissector class is used to dissect an URI into its compontents.
+	
+    <h3>Public functions</h3>
+    <a name="uri_dissector"></a>
+    <div class="fnhead">uri_dissector</div>
+    <dd>
+        Creates the uri_dissector instance.
+    </dd>
+    
+    <a name="dissect_uri"></a>
+    <div class="fnhead">dissect_uri</div>
+    <dd>
+        Dissects the uri and sets the public variables like scheme, e_scheme etc.
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr><td class="param">char * <b>uri</b></td><td>The uri which is dissected. The char * buffer is not modified!</td></tr>
+        </table>
+
+        <h4>Return value</h4>
+        True if the dissection was successfull, otherwise false.
+    </dd>
+    
+    <a name="path_to_argv"></a>
+    <div class="fnhead">path_to_argv</div>
+    Splits the path parts into to argv array.
+    <dd>
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr><td class="param">char * <b>buf</b></td><td>This buffer will be used for the arguments of the argv array.</td></tr>
+            <tr><td class="param">int <b>sz</b></td><td>The size of buf.</td></tr>
+            <tr><td class="param">int &<b>argc</b></td><td>The initial element count of the argv array. Will contain the actual element count after successfull completion.</td></tr>
+            <tr><td class="param">char *<b>argv</b>[]</td><td>The array which will contain the different parts of the path</td></tr>
+        </table>
+
+        <h4>Return value</h4>
+        True if the buffer was large enough and argv had enough elements. Otherwise false.
+    </dd>
+    
+    <a name="querystring_to_argv"></a>
+    <div class="fnhead">querystring_to_argv</div>
+    Splits the query string into the argv array, while argv[0] is a name and argv[1] is a value and so on.
+    <dd>
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr><td class="param">char * <b>buf</b></td><td>This buffer will be used for the arguments of the argv array.</td></tr>
+            <tr><td class="param">int <b>sz</b></td><td>The size of buf.</td></tr>
+            <tr><td class="param">int &<b>argc</b></td><td>The initial element count of the argv array. Will contain the actual element count after successfull completion.</td></tr>
+            <tr><td class="param">char *<b>argv</b>[]</td><td>The array which will contain the different parts of the query. The first element contains the name, the second the value and so on.</td></tr>
+        </table>
+
+        <h4>Return value</h4>
+        True if the buffer was large enough and argv had enough elements. Otherwise false.
+    </dd>
+    
+    <a name="compose"></a>
+    <div class="fnhead">compose</div>
+    Writes the different parts from the URI to a buffer. You can use the COMPOSE_* flags to specify the parts you want.
+    <dd>
+        <h4>Parameters</h4>
+        <table style="margin-left:-12px">
+            <tr><td class="param">char * <b>buf</b></td><td>This buffer will be used for the arguments of the argv array.</td></tr>
+            <tr><td class="param">dword <b>len_buf</b></td><td>The length of buf.</td></tr>
+            <tr><td class="param">dword <b>flags</b></td><td>Specifies the parts to compose. The default value is COMPOSE_ALL.</td></tr>
+        </table>
+
+        <h4>Return value</h4>
+        Returns buf again.
+    </dd>
+    
+    <a name="members"></a>
+    <h3>Public Members</h3>
+    <table style="margin-left:-12px">
+        <tr><td class="param">char * <b>scheme</b>; char * <b>e_scheme</b></td><td>Start and end pointer of the scheme, e.g. http.</td></tr>
+        <tr><td class="param">char * <b>hier</b>; char * <b>e_hier</b></td><td>Start and end pointer of the hierarchy, e.g. //.</td></tr>
+        <tr><td class="param">char * <b>usr</b>; char * <b>e_usr</b></td><td>Start and end pointer of the user.</td></tr>
+        <tr><td class="param">char * <b>pwd</b>; char * <b>e_pwd</b></td><td>Start and end pointer of the password.</td></tr>
+        <tr><td class="param">char * <b>ip</b>; char * <b>e_ip</b></td><td>Start and end pointer of the IP address.</td></tr>
+        <tr><td class="param">char * <b>fqdn</b>; char * <b>e_fqdn</b></td><td>Start and end pointer of the domain name (if there is no IP address).</td></tr>
+        <tr><td class="param">char * <b>port</b>; char * <b>e_port</b></td><td>Start and end pointer of the port.</td></tr>
+        <tr><td class="param">char * <b>path</b>; char * <b>e_path</b></td><td>Start and end pointer of the path.</td></tr>
+        <tr><td class="param">char * <b>file</b>; char * <b>e_file</b></td><td>Start and end pointer of the file after the path.</td></tr>
+        <tr><td class="param">char * <b>anchor</b>; char * <b>e_anchor</b></td><td>Start and end pointer of the anchor, e.g. #test.</td></tr>
+        <tr><td class="param">char * <b>query</b>; char * <b>e_query</b></td><td>Start and end pointer of the query string, e.g. ?test=123.</td></tr>        
+        <tr><td class="param">char * <b>params</b>; char * <b>e_params</b></td><td>Start and end pointer of the host parameters.</td></tr>
+    </table>
+        
+<h1> Code Example </h1>
+<a name="ExampleURI"><h2>URI dissection</h2></a>
+<pre class="sample"><code class="language-cpp">uri_dissector uri;
+uri.dissect_uri("http://admin:ip800@172.16.16.43/bla#funny?cgpn=73&cdpn=123");
+debug->iprintf("%.*s", uri.e_user - uri.user, uri.user); // prints "admin"
+
+char buf[256];                                                                       
+uri.dissect_uri("sip:1234@anywhere.de:8888;user=phone");                             
+uri.compose(buf,sizeof(buf),COMPOSE_PARAMS);   // yields "user=phone"                
+uri.compose(buf,sizeof(buf),COMPOSE_USR);      // yields "1234"                      
+uri.compose(buf,sizeof(buf),COMPOSE_HOST);     // yields "anywhere.de"               
+uri.compose(buf,sizeof(buf),COMPOSE_PORT);     // yields "8888" 
+</pre>
+</body>
+</html>

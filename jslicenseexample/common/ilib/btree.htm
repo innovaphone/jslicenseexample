@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>innovaphone SDK - btree</title>
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <script src="../../web1/doc/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <h1>btree</h1>
+    <p>
+        btree is a library of a self balanced binary search tree. The class btree is used
+        as a base class on the objects in the tree. For the tree itself a btree * is used, which
+        needs to be initialized to null for an empty tree.
+    </p>
+    <p>
+        The interface to put elements into the tree, get elements from the tree or find elements
+        in the tree, a set of public static member functions is used. All these functions use
+        the btree *, which is the reference to the tree as first argument. The put and get functions
+        may change this btree *, so in this case the btree * is passed as reference.
+    </p>
+    <p>
+        The static member functions all map one to one to non-static member functions with the
+        tree as this, so the non-static member functions could be used as well, except for an
+        empty tree the btree * would be null and according to C++ standard, it is forbidden to call
+        a non-static member with a null this pointer, so it is recommended to use the static member
+        functions.
+    </p>
+    <p>
+        By convention the elements in the tree are sorted from left to righ, left being the
+        "smallest" element and right the "biggest". For this the compare functions need to be
+        according to the conventions below.
+    </p>
+    <p>
+
+    </p>
+
+    <h2>File information</h2>
+    
+    <table style="margin-left:-12px">
+        <tr><td><b>File</b></td><td>common/ilib/btree.h<br/><br/></td></tr>
+        <tr>
+            <td><b><a href="#virtual">Virtual functions</a></b></td>
+            <td>
+                <a href="#btree_compare">btree_compare</a><br>
+                <a href="#leak_check">leak_check</a><br>
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td><b><a href="#static">Public static functions</a></b></td>
+            <td>
+                <a href="#static_btree_find">btree_find</a><br>
+                <a href="#static_btree_find_first_left">btree_find_first_left</a><br>
+                <a href="#static_btree_find_first_right">btree_find_first_right</a><br>
+                <a href="#static_btree_find_next_left">btree_find_next_left</a><br>
+                <a href="#static_btree_find_next_right">btree_find_next_right</a><br>
+                <a href="#static_btree_find_left">btree_find_left</a><br>
+                <a href="#static_btree_find_right">btree_find_right</a><br>
+                <a href="#static_btree_put">btree_put</a><br>
+                <a href="#static_btree_get">btree_get</a><br>
+                <a href="#static_get_count">get_count</a><br>
+                <a href="#static_tree_leak_check">tree_leak_check</a><br>
+                <br/>
+            </td>
+        </tr>
+        <tr>
+            <td><b><a href="#public">Public functions</a></b></td>
+            <td>
+                <a href="#btree_find">btree_find</a><br>
+                <a href="#btree_find_first_left">btree_find_first_left</a><br>
+                <a href="#btree_find_first_right">btree_find_first_right</a><br>
+                <a href="#btree_find_next_left">btree_find_next_left</a><br>
+                <a href="#btree_find_next_right">btree_find_next_right</a><br>
+                <a href="#btree_find_left">btree_find_left</a><br>
+                <a href="#btree_find_right">btree_find_right</a><br>
+                <a href="#btree_put">btree_put</a><br>
+                <a href="#btree_get">btree_get</a><br>
+                <a href="#get_count">get_count</a><br>
+                <a href="#print_tree">print_tree</a><br>
+                <a href="#tree_leak_check">tree_leak_check</a><br>
+                <br/>
+            </td>
+        </tr>
+    </table>
+
+    <!-- ---------------------------------------------------------------------- -->
+
+    <h3 id="virtual">Virtual Functions</h3>
+
+    <div id="btree_compare" class="fnhead" style="margin-top:5px">btree_compare</div></a>
+    <pre><code class="C++">    virtual int btree_compare(void * key) = 0;
+    virtual int btree_compare(class btree * b) = 0;</code></pre>
+    <p>
+        Compare functions, which need to be implemented for the sorting. The value addressed by the
+        argument is compared to the value of the object. If the argument is smaller the the value of
+        the object, the function should return a negative value, if the argument is bigger a positive
+        value, if the value is identical 0. This way the elements are sorted left to right from small
+        to big.
+    </p>
+    <p>
+        There are two versions of the compare function. One which takes a void * key as argument, which
+        should be cast to the actual value to which to compare. This function is used by the library
+        to find elements in the tree.<br/>
+        The other function takes a btree * b as argument. This function is used to put elements into the
+        tree or remove elements from the tree. b should be case to the type of the element so that the
+        real sorting value inside the element can be addressed.
+    </p>
+    <p>
+        Sample:
+    </p>
+    <pre><code class="C++">int myObject::btree_compare(void * key) {
+    return strcmp(name,(char * )key);
+}
+int myObject::btree_compare(btree * b) {
+    return strcmp(name,((myObject *)b)->name);
+}</code></pre>
+
+    <div id="leak_check" class="fnhead" style="margin-top:5px">leak_check</div></a>
+    <pre><code class="C++">virtual void leak_check() {};</code></pre>
+    <p>
+        When the tree_leak_check function is called on an element, this function is called on
+        this element and each element in the tree below this element. Typicall called on the root
+        to perform leak_check on all elements.
+    </p>
+
+    <!-- ---------------------------------------------------------------------- -->
+
+    <h3 id="static">Public static functions</h3>
+
+    <div id="static_btree_find" class="fnhead" style="margin-top:5px">btree_find</div></a>
+    <pre><code class="C++">static class btree * btree_find(class btree * tree, const void * key);</code></pre>
+    <p>
+        Find an object in the tree. The argument 'key' is a pointer to the value used for
+        comparing the objects
+    </p>
+
+    <div id="static_btree_find_first_left" class="fnhead" style="margin-top:5px">btree_find_first_left</div></a>
+    <pre><code class="C++">static class btree * btree_find_first_left(class btree * tree, const void * key);</code></pre>
+    <p>
+        Find the first element from the left matching key or being bigger then key.
+    </p>
+
+    <div id="static_btree_find_first_right" class="fnhead" style="margin-top:5px">btree_find_first_right</div></a>
+    <pre><code class="C++">static class btree * btree_find_first_right(const void * key);</code></pre>
+    <p>
+        Find the first element from the right matching key or being smaller then key.
+    </p>
+
+    <div id="static_btree_find_next_left" class="fnhead" style="margin-top:5px">btree_find_next_left</div></a>
+    <pre><code class="C++">static class btree * btree_find_next_left(class btree * tree, const void * key);</code></pre>
+    <p>
+        Find the first element from the left being bigger then key.
+    </p>
+
+    <div id="static_btree_find_next_right" class="fnhead" style="margin-top:5px">btree_find_next_right</div></a>
+    <pre><code class="C++">static class btree * btree_find_next_right(class btree * tree, const void * key);</code></pre>
+    <p>
+        Find the first element from the right being smaller then key.
+    </p>
+
+    <div id="static_btree_find_left" class="fnhead" style="margin-top:5px">btree_find_left</div></a>
+    <pre><code class="C++">static class btree * btree_find_left(class btree * tree);</code></pre>
+    <p>
+        Returns the left most element
+    </p>
+
+    <div id="static_btree_find_right" class="fnhead" style="margin-top:5px">btree_find_right</div></a>
+    <pre><code class="C++">static class btree * btree_find_right(class btree * tree);</code></pre>
+    <p>
+        Returns the right most element
+    </p>
+
+    <div id="static_btree_put" class="fnhead" style="margin-top:5px">btree_put</div></a>
+    <pre><code class="C++">static void btree_put(class btree * & tree, class btree * in);
+static class btree * btree_put(class btree * & tree, class btree * in, bool & before, class btree * & p);</code></pre>
+    <p>
+        Function called to insert an object into the tree. The argument in is the pointer
+        to the new object.
+    </p>
+    <p>
+        There is a second version of this function which take the additional arguments bool & before
+        and class btree * & p. These argumnents are used to return the neighbor of the added element.
+        If before is true the new element was inserted before p, if before is false the element was
+        inserted after p.
+    </p>
+
+    <div id="static_btree_get" class="fnhead" style="margin-top:5px">btree_get</div></a>
+    <pre><code class="C++">void btree_get(class btree * & tree, class btree * out);</code></pre>
+    <p>
+        Removes the object out from the tree. If the object does not exists the call will assert.
+    </p>
+
+    <div id="static_get_count" class="fnhead" style="margin-top:5px">get_count</div></a>
+    <pre><code class="C++">int get_count(class btree * tree) { return count; };</code></pre>
+    <p>
+        Returns the number of elements in the subtree. This is the number of elements below the
+        element plus one.
+    </p>
+
+    <div id="static_tree_leak_check" class="fnhead" style="margin-top:5px">tree_leak_check</div></a>
+    <pre><code class="C++">void tree_leak_check(class btree * tree);</code></pre>
+    <p>
+        Calls the leak_check functions of all elements in the tree.
+    </p>
+
+    <!-- ---------------------------------------------------------------------- -->
+
+    <h3 id="public">Public functions</h3>
+
+    <div id="btree_find" class="fnhead" style="margin-top:5px">btree_find</div></a>
+    <pre><code class="C++">class btree * btree_find(const void * key);</code></pre>
+    <p>
+        Find an object in the tree. The argument 'key' is a pointer to the value used for
+        comparing the objects
+    </p>
+
+    <div id="btree_find_first_left" class="fnhead" style="margin-top:5px">btree_find_first_left</div></a>
+    <pre><code class="C++">class btree * btree_find_first_left(const void * key);</code></pre>
+    <p>
+        Find the first element from the left matching key or being bigger then key.
+    </p>
+
+    <div id="btree_find_first_right" class="fnhead" style="margin-top:5px">btree_find_first_right</div></a>
+    <pre><code class="C++">class btree * btree_find_first_right(const void * key);</code></pre>
+    <p>
+        Find the first element from the right matching key or being smaller then key.
+    </p>
+
+    <div id="btree_find_next_left" class="fnhead" style="margin-top:5px">btree_find_next_left</div></a>
+    <pre><code class="C++">class btree * btree_find_next_left(const void * key);</code></pre>
+    <p>
+        Find the first element from the left being bigger then key.
+    </p>
+
+    <div id="btree_find_next_right" class="fnhead" style="margin-top:5px">btree_find_next_right</div></a>
+    <pre><code class="C++">class btree * btree_find_next_right(const void * key);</code></pre>
+    <p>
+        Find the first element from the right being smaller then key.
+    </p>
+
+    <div id="btree_find_left" class="fnhead" style="margin-top:5px">btree_find_left</div></a>
+    <pre><code class="C++">class btree * btree_find_left();</code></pre>
+    <p>
+        Returns the left most element
+    </p>
+
+    <div id="btree_find_right" class="fnhead" style="margin-top:5px">btree_find_right</div></a>
+    <pre><code class="C++">class btree * btree_find_right();</code></pre>
+    <p>
+        Returns the right most element
+    </p>
+
+    <div id="btree_put" class="fnhead" style="margin-top:5px">btree_put</div></a>
+    <pre><code class="C++">class btree * btree_put(class btree * in);
+class btree * btree_put(class btree * in, bool & before, class btree * & p);</code></pre>
+    <p>
+        Function called to insert an object into the tree. The argument in is the pointer
+        to the new object. The return value is the new root. This function is called as member
+        function on the root of the tree, which is a null pointer for an empty tree.
+    </p>
+    <p>
+        There is a second version of this function which take the additional arguments bool & before
+        and class btree * & p. These argumnents are used to return the neighbor of the added element.
+        If before is true the new element was inserted before p, if before is false the element was
+        inserted after p.
+    </p>
+
+    <div id="btree_get" class="fnhead" style="margin-top:5px">btree_get</div></a>
+    <pre><code class="C++">class btree * btree_get(class btree * out);</code></pre>
+    <p>
+        Removes the object out from the tree. If the object does not exists the call will assert.
+    </p>
+
+    <div id="get_count" class="fnhead" style="margin-top:5px">get_count</div></a>
+    <pre><code class="C++">int get_count() { return count; };</code></pre>
+    <p>
+        Returns the number of elements in the subtree. This is the number of elements below the
+        element plus one.
+    </p>
+
+    <div id="print_tree" class="fnhead" style="margin-top:5px">print_tree</div></a>
+    <pre><code class="C++">void print_tree(int level);</code></pre>
+    <p>
+        This is a platform specific function to print the content of the tree for debugging.
+    </p>
+
+    <div id="tree_leak_check" class="fnhead" style="margin-top:5px">tree_leak_check</div></a>
+    <pre><code class="C++">void tree_leak_check();</code></pre>
+    <p>
+        Calls the leak_check functions of all elements in the tree.
+    </p>
+
+</body>
+</html>

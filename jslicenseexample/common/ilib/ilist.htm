@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>innovaphone SDK - Socket implementation</title>
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <script src="../../web1/doc/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <h1>ilist</h1>
+    <p>
+        The ilist is a template library modeled after the STL list. Instead of allocating a
+        container for the elements, it uses base classes for the elements. This way much less
+        alloc an free operations are needed, which saves a lot of cpu time and memory. Also
+        when iterating thru the list one indirection less is needed. It uses the istd namespace.
+    </p>
+    <h2>File information</h2>
+    <table style="margin-left:-12px">
+        <tr><td><b>File</b></td><td>common/ilib/ilist.h<br/><br/></td></tr>
+        <tr><td><a href="#classes"><b>Classes</b></a></td><td>
+                                                <a href="#class-list">list</a><br>
+                                                <a href="#class-listelement">listElement</a><br>
+                                                <br/>
+                                            </td></tr>
+        <tr><td><a href="#list-members"><b>class list members</b></a></td><td>
+                                                <a href="#list">list</a><br>
+                                                <a href="#~list">~list</a><br>
+                                                <a href="#front">front</a><br>
+                                                <a href="#empty">empty</a><br>
+                                                <a href="#back">back</a><br>
+                                                <a href="#push_front">push_front</a><br>
+                                                <a href="#push_back">push_back</a><br>
+                                                <a href="#pop_front">pop_front</a><br>
+                                                <a href="#pop_back">pop_back</a><br>
+                                                <a href="#insertBefore">insertBefore</a><br>
+                                                <a href="#insertBehind">insertBehind</a><br>
+                                                <a href="#swap">swap</a><br>
+                                                <a href="#sort">sort</a><br>
+                                                <br/>
+                                            </td></tr>
+        <tr><td><a href="#listelement-members"><b>class listElement members</b></a></td><td>
+                                                <a href="#listElement">listElement</a><br>
+                                                <a href="#~listElement">~listElement</a><br>
+                                                <a href="#goNext">goNext</a><br>
+                                                <a href="#goPrev">goPrev</a><br>
+                                                <a href="#remove">remove</a><br>
+                                                <a href="#getList">getList</a><br>
+                                                <a href="#compare">compare</a><br>
+                                                <a href="#swap">swap</a><br>
+                                                <br/>
+                                            </td></tr>
+        <tr><td><a href="#examples"><b>Examples</b></a></td><td>
+                                            </td></tr>
+    </table>
+
+    <a name="classes"><h1>Classes</h1></a>
+    <a name="class-list"><h2>list</h2></a>
+    <pre><code class="C++">template &lt;class T&gt; class list {
+    ...
+};</code></pre>
+    <p>
+        The list itself consisting of a head and tail pointer to a class T.
+    </p>
+
+    <a name="class-listelement"><h2>listElement</h2></a>
+    <pre><code class="C++">template &lt;class T&gt; class listElement {
+    ...
+};</code></pre>
+    <p>
+        Used as a base class for elements. This contains the forward and backward linking
+        pointer and a pointer to the list itself.
+    </p>
+
+    <a name="list-members"><h1>class list members</h1></a>
+
+    <a name="list"><h2>list</h2></a>
+    <pre><code class="C++">list()</code></pre>
+    <p>
+        constructor, clears the list
+    </p>
+
+    <a name="~list"><h2>~list</h2></a>
+    <pre><code class="C++">~list()</code></pre>
+    <p>
+        destructor, removes all elements from the list
+    </p>
+
+    <a name="front"><h2>front</h2></a>
+    <pre><code class="C++">const T * front()</code></pre>
+    <p>
+        returns front (head) of list.
+    </p>
+
+    <a name="empty"><h2>empty</h2></a>
+    <pre><code class="C++">bool empty()</code></pre>
+
+    <a name="back"><h2>back</h2></a>
+    <pre><code class="C++">const T * back()</code></pre>
+    <p>
+        returns back (tail) of list.
+    </p>
+
+    <a name="push_front"><h2>push_front</h2></a>
+    <pre><code class="C++">void push_front(T * e)</code></pre>
+    <p>
+        Add an element to the front (head) of the list.
+    </p>
+
+    <a name="push_back"><h2>push_back</h2></a>
+    <pre><code class="C++">void push_back(T * e)</code></pre>
+    <p>
+        Add an element to the back (tail) of the list.
+    </p>
+
+    <a name="pop_front"><h2>pop_front</h2></a>
+    <pre><code class="C++">T * pop_front()</code></pre>
+    <p>
+        Remove an element from the front (head) of the list.
+    </p>
+
+    <a name="pop_back"><h2>pop_back</h2></a>
+    <pre><code class="C++">T * pop_back()</code></pre>
+    <p>
+        Remove an element from the back (tail) of the list.
+    </p>
+
+    <a name="insertBefore"><h2>insertBefore</h2></a>
+    <pre><code class="C++">void insertBefore(T * e, T * before)</code></pre>
+    <p>
+        Insert the element e before the element identified by 'before' in the list.
+    </p>
+
+    <a name="insertBehind"><h2>insertBehind</h2></a>
+    <pre><code class="C++">void insertBehind(T * e, T * behind)</code></pre>
+    <p>
+        Insert the element e behind the element identified by 'behind' in the list.
+    </p>
+
+    <a name="swap"><h2>swap</h2></a>
+    <pre><code class="C++">void swap(T * a, T * b)</code></pre>
+    <p>
+        Swaps the values of the two given listElement objects. The swap function of listElement must be overwritten, also the pointers
+        a and b passed to swap must point to a valid object.
+    </p>
+
+    <a name="sort"><h2>sort</h2></a>
+    <pre><code class="C++">void sort(T * start = NULL, T * end = NULL)</code></pre>
+    <p>
+        Sorts the list by using quicksort. The sort will be done between start and end. If start is NULL, the start of the list will be used, and
+        if end is NULL, the end of the list. So by calling sort() withouth parameters, the sorting will be done for the whole list. During sorting,
+        the function will call listElement::compare() and listElement::swap(). So both of them must be implemented to not end up with an assertion.
+    </p>
+
+    <a name="listelement-members"><h1>class listElement members</h1></a>
+
+    <a name="listElement"><h2>listElement</h2></a>
+    <pre><code class="C++">listElement()</code></pre>
+
+    <a name="~listElement"><h2>~listElement</h2></a>
+    <pre><code class="C++">virtual ~listElement()</code></pre>
+    <p>
+        The destructor of a list element removes the element from the list.
+    </p>
+
+    <a name="goNext"><h2>goNext</h2></a>
+    <pre><code class="C++">const T * goNext()</code></pre>
+    <p>
+        Returns the next element in the list.
+    </p>
+
+    <a name="goPrev"><h2>goPrev</h2></a>
+    <pre><code class="C++">const T * goPrev()</code></pre>
+    <p>
+        Returns the previous element in the list.
+    </p>
+
+    <a name="remove"><h2>remove</h2></a>
+    <pre><code class="C++">void remove()</code></pre>
+    <p>
+        Removes the element from the list.
+    </p>
+
+    <a name="getList"><h2>getList</h2></a>
+    <pre><code class="C++">const list<T> * getList()</code></pre>
+    <p>
+        Returns the list, in which this element is linked.
+    </p>
+
+    <a name="compare"><h2>compare</h2></a>
+    <pre><code class="C++">virtual int compare(T * e)</code></pre>
+    <p>
+        Will be called from list::sort() to know how to handle the item and the one passed to compare. The function need to return a value less than 0, if
+        this is < e, zero if this is equal to e or a value greater than 0 if this is > e. If you don't whant to call list::sort, there is no need to override
+        this function.
+    </p>
+
+    <a name="swap"><h2>swap</h2></a>
+    <pre><code class="C++">virtual void swap(T * with)</code></pre>
+    <p>
+        Will be called from list::sort() or list::swap() to swap the instance of the listElement object with the one passed. The implementation of the function
+        is responsible to switch all fields of this and with. If you don't whant to call list::sort() or list::swap(), there is no need to override this function.
+    </p>
+
+    <a name="examples"><h1>Examples</h1></a>
+
+    <pre><code class="C++">    // use the ilist base class
+class sample : public istd::listElement&lt;sample&gt; {
+
+}
+ ...
+    // defining the list
+istd::list&lt;sample&gt; samples;
+ ...
+    // iterating thru the list
+for(class sample * s = samples.front(); s; s=s->goNext()) {
+    ...
+}</code></pre>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>innovaphone SDK - xml.h</title>
+    <link rel="stylesheet" href="../../web1/doc/innovaphone.doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../web1/doc/vs.css">
+</head>
+
+<body>
+    <script src="../../web1/doc/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <h1>xml</h1>
+
+    <!-- ----------------------------------------------------------------------------- -->
+
+    <p>
+        The class <b>xml_io</b> contains a descriptor list that represents structured data that
+        can be encoded to or decoded from XML strings. Member functions to decode XML into this
+        list, encode XML from this list are available, as well as functions to build up
+        the list, or traverse the list to read the decoded data.
+    </p>
+    <p>
+        Each element in the descriptor list has a unique numeric ID.
+    </p>
+    <p>
+        The ID <b>XML_ROOT_TAG (0xffff)</b> represents the root element. It can
+        contain no or a single element. Typically the root contains an object that
+        holds all the data.
+    </p>
+
+    <!-- ----------------------------------------------------------------------------- -->
+
+    <h2>Writing XML data</h2>
+
+    <p>
+        The following functions put an element into the XML structure. <b>Note:</b> The elements cannot be added in
+        any sequence. An element is considered closed, when to its parent another element was added. Then
+        you cannot add further elements to this.
+    </p>
+    <p>
+        Example:
+    </p>
+    <pre>
+<code class="C++">word root = xml.add_tag(XML_ROOT_TAG,"root");
+word base = xml.add_tag(root, "tag1");
+xml.add_attribute(base, "attribute1")
+xml.add_tag(root, "tag2");
+
+    // this does not work, because tag base is already closed
+    // by adding tag2 to its parent
+xml.add_attribute(base, "attribute2");</code></pre>
+
+    <p>
+        <b>Note:</b> There is a size limitation for encoding, decoding XML. A maximum number of 4096
+        elements is supported. In this respect as element a tag, an attribute, an attribute value
+        and a content value counts as element. So an XML &lt;tag attribute="attribute-value"/&gt;
+        consists of 3 elements.
+    </p>
+    <dl>
+        <dt>word add_tag(word base, const char * s)</dt><dd></dd>
+        <dt>void add_attrib(word base, const char * name, const char * value, word len=0xffff)</dt><dd></dd>
+        <dt>void add_attrib_int(word base, const char * name, int c, char * & tmp)</dt><dd></dd>
+        <dt>void add_attrib_unsigned(word base, const char * name, dword c, char * & tmp)</dt><dd></dd>
+        <dt>void add_attrib_hex(word base, const char * name, int c, char * & tmp)</dt><dd></dd>
+        <dt>void add_attrib_hexstring(word base, const char * name, const byte * hex, word hex_len, char * & tmp)</dt><dd></dd>
+        <dt>void add_attrib_url(word base, const char * name, const char * value, char * & tmp)</dt><dd></dd>
+        <dt>void add_attrib_bool(word base, const char * name, bool value)</dt><dd></dd>
+        <dt>void add_attrib_printf(word base, const char * name, char * & tmp, const char * format, ...)</dt><dd></dd>
+        <dt>void add_content(word base, const char * s, word len=0xffff)</dt><dd></dd>
+    </dl>
+    <p>
+        Parameters:
+    </p>
+    <dl>
+        <dt>word base</dt><dd>Identifies the parent tag/attribute</dd>
+        <dt>const char * name</dt><dd>Name of the tag/attribute</dd>
+        <dt>char * & tmp</dt>
+        <dd>
+            Buffer to hold formated data until the XML is encoded. The pointer is increased
+            so that the same variable can be used for the next call.
+        </dd>
+    </dl>
+    <p>
+        The following functions can be used for encoding.
+    </p>
+    <dl>
+        <dt>word encode()</dt><dd>Encodes the XML to the buffer given with the constructor</dd>
+        <dt>void write_tag(word current, char * & p)</dt>
+        <dd>
+            Write XML coded data enclosed by the tag identified with current to p.
+        </dd>
+    </dl>
+
+    <!-- ----------------------------------------------------------------------------- -->
+
+    <h2>Reading XML data</h2>
+
+    <p>
+        Functions for decoding:
+    </p>
+    <dl>
+        <dt>bool decode(bool href = false)</dt>
+        <dd>
+            Decodes XML data, which was given in the buffer in the constructor. Returns true
+            if the XML was well formed
+        </dd>
+        <dt>bool read_tag(char * & p)</dt>
+        <dd>
+            Decodes the XML data given with p. Returns true if the XML was well formed
+        </dd>
+    </dl>
+    <p>
+        Elements can be accessed by name using the following functions.
+    </p>
+    <dl>
+        <dt>char * get_attrib(word base, const char * name)</dt><dd></dd>
+        <dt>char * get_attrib(word base, const char * name, word & length)</dt><dd></dd>
+        <dt>int get_attrib_int(word base, const char * name, bool * present=0)</dt><dd></dd>
+        <dt>unsigned get_attrib_unsigned(word base, const char * name, bool * present=0)</dt><dd></dd>
+        <dt>int get_attrib_hex(word base, const char * name, bool * present=0)</dt><dd></dd>
+        <dt>int get_attrib_dec(word base, const char * name, bool * present=0)</dt><dd></dd>
+        <dt>bool get_attrib_bool(word base, const char * name)</dt><dd></dd>
+        <dt>word get_tag(word base, const char * name, const char * ns=0)</dt><dd></dd>
+        <dt>word get_content(word base)</dt>
+    </dl>
+    <p>
+        Parameters:
+    </p>
+    <dl>
+        <dt>word base</dt><dd>The parent tag</dd>
+        <dt>const char * name</dt><dd>The name of the tag/attribute</dd>
+    </dl>
+    <p>
+        To navigate in the element tree, the following functions are available
+    </p>
+    <dl>
+        <dt>word get_tag(word base, const char * name, const char * ns=0)</dt><dd></dd>
+        <dt> word get_next_tag(word base, const char * name, word last)</dt><dd></dd>
+        <dt></dt><dd></dd>
+        <dt></dt><dd></dd>
+        <dt></dt><dd></dd>
+        <dt></dt><dd></dd>
+    </dl>
+
+    <!-- ----------------------------------------------------------------------------- -->
+
+    <h2>Reading large XML</h2>
+
+    <p>
+        For a single XML data structure there is the above limitation of the maximum number
+        of elements. Larger XML can be read, if they consist on some level of a list of sub
+        structures which are limited in size. Such a XML can be decoded block by block.
+        Decoding can be started with the first block. It will end with an incomplete XML. All
+        sub tags which are complete, can be read. Then there are functions to remove
+        all the complete blocks from the data, freeing space in the buffer, which can be
+        filled with the next block and decoding can continue. For this the following functions
+        are available:
+    </p>
+    <dl>
+        <dt>void save_incomplete(word root, word base,xml_io & to)</dt>
+        <dd>
+            Save the XML to a new xml_io, so that the incomplete tags from base and
+            below are copied and the outer tags from root up are reconstructed
+            <dl>
+                <dt>word root</dt>
+                <dd>
+                    The XML Tag containing the limited size elements
+                </dd>
+                <dt>word base</dt>
+                <dd>
+                    An incomplete element inside base, if available. Should be 0xffff
+                    if no incomplete element is available
+                </dd>
+                <dt>xml_io & to</dt>
+                <dd>
+                    The destination to which the XML is saved
+                </dd>
+            </dl>
+        </dd>
+        <dt>void copy_out(word base, class xml_io & to, word & to_base, char * & to_p)</dt>
+        <dd>
+            Internal function used by save_incomplete. Copies the tag identified by base
+            and all outer tags up to the root into a new xml_io. to_base returns the handle
+            of base in the new xml_io
+        </dd>
+        <dt>void copy_in(word base, class xml_io & to, word to_base, char * & to_p)</dt>
+        <dd>
+            Copies all (incomplete) tags and attributes inside the tag identified by
+            base
+        </dd>
+    </dl>
+    <p>
+        Example:
+    </p>
+    <pre><code class="C++">class xml_io xml(buffer);   // the xml_io class used for decoding
+...
+byte error = xml.read();    // decode the data copied to buffer
+    // do handling of all complete elements
+...
+if (error == XML_ERROR_INCOMPLETE) {
+    char b[XML_CHUNK_SIZE];
+    class xml_io save(b);                   // temporary xml_io to copy the data
+
+        // save the incomplete data to temporary xml_io base is the tag containing the
+        // tags of the limited size
+    xml.save_incomplete(base,step,save);
+        // in the temporary structure, navigate to the tag containing the tags of
+        // limited size. In this example it is test/steps
+    base = save.get_tag(0xffff,"test");
+    base = save.get_tag(base,"steps");
+        // get the handle of the first (incomplete) tag
+    step = save.get_first(XML_TYPE_TAG,base);
+        // copy back the saved XML to the original xml_io
+    save.save_incomplete(base,step,xml);
+        // restore base to test/steps and step to the first incomplete tag, so
+        // handling of the data can continue here 
+    base = xml.get_tag(0xffff,"test");
+    base = xml.get_tag(base,"steps");
+    step = xml.get_first(XML_TYPE_TAG,base);
+        // get end of data in the buffer, to identify were new data has to be copied
+        // to
+    offset = xml.ofs();
+}
+    // copy the data into the buffer, starting at offset. Make shure it is 0 terminated.
+    // after that handling of the next block can start with xml.read() again</code></pre>
+</body>
+</html>

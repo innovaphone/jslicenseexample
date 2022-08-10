@@ -1,0 +1,10 @@
+{
+    "plugins": [
+        {
+            "js": "innovaphone.jslicenseexamplemanager",
+            "icon": "innovaphone-jslicenseexample.png",
+            "lang": "innovaphone.jslicenseexamplemanagertexts",
+            "domains": false
+        }
+    ]
+}
