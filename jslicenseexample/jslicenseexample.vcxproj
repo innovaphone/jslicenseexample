@@ -135,9 +135,6 @@
     <None Include="jslicenseexample\httpfiles\innovaphone.jslicenseexamplemanager.css" />
     <None Include="jslicenseexample\httpfiles\innovaphone.jslicenseexamplemanager.js" />
     <None Include="jslicenseexample\httpfiles\innovaphone.jslicenseexamplemanagertexts.js" />
-    <None Include="readme.htm">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="jslicenseexample\httpfiles\innovaphone-jslicenseexample.png" />
