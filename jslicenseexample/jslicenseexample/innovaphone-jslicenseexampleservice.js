@@ -1,7 +1,6 @@
 var pbxConnections = [];
 var requests = new Object();
 var srccount = 1;
-var jsonapi = null;
 var servicelics = 0;
 
 
@@ -31,7 +30,6 @@ new PbxApi("PbxAdminApi").onconnected(function (conn_pbx) {
         conn_pbx = null;
         requests = new Object();
         srccount = 1;
-        pbx = null;
         servicelics = 0;
     });
 });
