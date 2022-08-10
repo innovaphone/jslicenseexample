@@ -1,2 +1,10 @@
 .idea
+.vs
 nbproject
+*/sdk
+*/jse
+*/exe
+*/web1
+*/arm-debug
+*/doc
+*/obj
